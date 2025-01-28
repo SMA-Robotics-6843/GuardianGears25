@@ -4,14 +4,45 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
+import edu.wpi.first.math.util.Units;
+import static edu.wpi.first.units.Units.*;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.generated.TunerConstants;
+import frc.robot.subsystems.SwerveDriveSubsystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
+  private SwerveDriveSubsystem drivetrain;
+  private PhotonCamera camera;
 
+  private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
+  private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
+
+  private final CommandXboxController joystick = new CommandXboxController(0);
   private final RobotContainer m_robotContainer;
+  private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
+  .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+  .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+  
+  private final double VISION_TURN_kP = 0.01;
+  private final double VISION_DES_ANGLE_deg = 0.0;
+  private final double VISION_STRAFE_kP = 0.5;
+  private final double VISION_DES_RANGE_m = 1.25;
+
+  // Calculate drivetrain commands from Joystick values
+  double forward = -joystick.getLeftY() * MaxSpeed;
+  double strafe = -joystick.getLeftX() * MaxSpeed;
+  double turn = -joystick.getRightX() * MaxAngularRate;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -54,7 +85,54 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+        // Read in relevant data from the Camera
+        boolean targetVisible = false;
+        double targetYaw = 0.0;
+        double targetRange = 0.0;
+        var results = camera.getAllUnreadResults();
+        if (!results.isEmpty()) {
+            // Camera processed a new frame since last
+            // Get the last one in the list.
+            var result = results.get(results.size() - 1);
+            if (result.hasTargets()) {
+                // At least one AprilTag was seen by the camera
+                var target = result.getTargets().get(0); // Get the first target
+                targetYaw = target.getYaw();
+                targetRange =
+                        PhotonUtils.calculateDistanceToTargetMeters(
+                                Units.inchesToMeters(20.5), // Measured with a tape measure, or in CAD.
+                                Units.inchesToMeters(8.5), // From 2024 game manual for ID 7
+                                Units.degreesToRadians(90), // Measured with a protractor, or in CAD.
+                                Units.degreesToRadians(target.getPitch()));
+    
+                targetVisible = true;
+            }
+        }
+
+        // Auto-align when requested
+        if (joystick.a().getAsBoolean() && targetVisible) {
+            // Driver wants auto-alignment to tag 7
+            // And, tag 7 is in sight, so we can turn toward it.
+            // Override the driver's turn and fwd/rev command with an automatic one
+            // That turns toward the tag, and gets the range right.
+            turn =
+                    (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.kMaxAngularSpeed;
+            forward =
+                    (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.kMaxLinearSpeed;
+        }
+
+        // Command drivetrain motors based on target speeds
+        drivetrain.applyRequest(() ->
+        drive.withVelocityX(forward) // Drive forward with negative Y (forward)
+            .withVelocityY(strafe) // Drive left with negative X (left)
+            .withRotationalRate(turn) // Drive counterclockwise with negative X (left)
+        );
+
+        // Put debug information to the dashboard
+        SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
+        SmartDashboard.putNumber("Vision Target Range (m)", targetRange);
+  }
 
   @Override
   public void teleopExit() {}
