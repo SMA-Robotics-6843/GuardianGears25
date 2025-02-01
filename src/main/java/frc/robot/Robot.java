@@ -17,13 +17,13 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.Constants;
+import frc.robot.constants.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private SwerveDriveSubsystem drivetrain;
-  private PhotonCamera camera;
+  private PhotonCamera photonCamera;
 
   private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
   private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
@@ -46,6 +46,7 @@ public class Robot extends TimedRobot {
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    photonCamera = new PhotonCamera("Arducam");
   }
 
   @Override
@@ -86,29 +87,24 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+        SwerveDriveSubsystem drivetrain = m_robotContainer.getDrivetrain();
+       // HttpCamera m_Arducam = new HttpCamera("PhotonVisionCamera","http://photonvision.local:5800");
+       // CameraServer.startAutomaticCapture(m_Arducam);
         // Read in relevant data from the Camera
         boolean targetVisible = false;
         double targetYaw = 0.0;
         double targetRange = 0.0;
-        var results = camera.getAllUnreadResults();
-        if (!results.isEmpty()) {
-            // Camera processed a new frame since last
-            // Get the last one in the list.
-            var result = results.get(results.size() - 1);
-            if (result.hasTargets()) {
-                // At least one AprilTag was seen by the camera
-                var target = result.getTargets().get(0); // Get the first target
-                targetYaw = target.getYaw();
-                targetRange =
-                        PhotonUtils.calculateDistanceToTargetMeters(
-                                Units.inchesToMeters(20.5), // Measured with a tape measure, or in CAD.
-                                Units.inchesToMeters(8.5), // From 2024 game manual for ID 7
-                                Units.degreesToRadians(90), // Measured with a protractor, or in CAD.
-                                Units.degreesToRadians(target.getPitch()));
-    
-                targetVisible = true;
-            }
-        }
+    var results = photonCamera.getLatestResult();
+   /*  if (results.hasTargets()) {
+        var target = results.getBestTarget(); // Get the best target
+        targetYaw = target.getYaw();
+        targetRange = PhotonUtils.calculateDistanceToTargetMeters(
+                Units.inchesToMeters(20.5), // Measured with a tape measure, or in CAD.
+                Units.inchesToMeters(8.5), 
+                Units.degreesToRadians(90), // Measured with a protractor, or in CAD.
+                Units.degreesToRadians(target.getPitch()));
+        targetVisible = true;
+    }
 
         // Auto-align when requested
         if (joystick.a().getAsBoolean() && targetVisible) {
@@ -120,7 +116,7 @@ public class Robot extends TimedRobot {
                     (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.kMaxAngularSpeed;
             forward =
                     (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.kMaxLinearSpeed;
-        }
+        } */
 
         // Command drivetrain motors based on target speeds
         drivetrain.applyRequest(() ->

@@ -235,8 +235,8 @@
             "IsStandaloneFx": false
         },
         "IsValidGyroCANbus": true,
-        "VerticalTrackSizeInches": 20.0,
-        "HorizontalTrackSizeInches": 20.0,
+        "VerticalTrackSizeInches": 23.5,
+        "HorizontalTrackSizeInches": 23.5,
         "WheelRadiusInches": 2.0,
         "IsLeftSideInverted": false,
         "IsRightSideInverted": true,

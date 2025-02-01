@@ -7,18 +7,18 @@ package frc.robot.subsystems;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
-import frc.robot.Constants;
+import frc.robot.constants.Constants;
 
 
 public class GooglyEyeSubsystem extends SubsystemBase {
-  static SparkMax googlyEyeMotor = new SparkMax(Constants.GOOGLY_EYE_MOTOR, MotorType.kBrushless);
+  //static SparkMax googlyEyeMotor = new SparkMax(Constants.GOOGLY_EYE_MOTOR, MotorType.kBrushless);
 
   /** Creates a new GooglyEyeSubsystem. */
   public GooglyEyeSubsystem() {
   }
 
   public void setSpeed(double speed) {
-    googlyEyeMotor.set(speed);
+   // googlyEyeMotor.set(speed);
   }
 
   
