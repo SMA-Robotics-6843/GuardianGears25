@@ -12,15 +12,14 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.constants.Constants;
-
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private PhotonCamera photonCamera;
 
   private final RobotContainer m_robotContainer;
   
+  private PhotonCamera photonCamera;
+
   private final double VISION_TURN_kP = 0.01;
   private final double VISION_DES_ANGLE_deg = 0.0;
   private final double VISION_STRAFE_kP = 0.5;
@@ -29,6 +28,7 @@ public class Robot extends TimedRobot {
   // Calculate drivetrain commands from Joystick values
   public double forward = 0;
   public double turn = 0;
+
 
   public Robot() {
     m_robotContainer = new RobotContainer();
@@ -73,7 +73,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-         // Read in relevant data from the Camera
+             // Read in relevant data from the Camera
         boolean targetVisible = false;
         double targetYaw = 0.0;
         double targetRange = 0.0;

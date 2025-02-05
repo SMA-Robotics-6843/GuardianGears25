@@ -15,12 +15,8 @@ import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.AprilTagAlign;
-//import frc.robot.commands.GooglyEyeCommand;
-import frc.robot.constants.TunerConstants;
+import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-//import frc.robot.subsystems.GooglyEyeSubsystem;
-import frc.robot.Robot;
-
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -36,16 +32,15 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    //private final CommandXboxController joystick2 = new CommandXboxController(1);
-    
+
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
 
-    public final Robot robot = new Robot();
-    public final AprilTagAlign aprilTagAlign = new AprilTagAlign(drivetrain, robot);
-  //  public final GooglyEyeSubsystem GooglyEyeSubsystem = new GooglyEyeSubsystem();
-   // public final GooglyEyeCommand googlyEyeCommand = new GooglyEyeCommand(GooglyEyeSubsystem);
+    public final Robot robot;
+    public final AprilTagAlign aprilTagAlign;
 
     public RobotContainer() {
+        robot = new Robot();
+        aprilTagAlign = new AprilTagAlign(drivetrain, robot, this);
         configureBindings();
     }
 
@@ -76,10 +71,9 @@ public class RobotContainer {
         // reset the field-centric heading on left bumper press
         joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
-        drivetrain.registerTelemetry(logger::telemeterize);
+        joystick.a().onTrue(aprilTagAlign);
 
-       joystick.a().whileTrue(aprilTagAlign);
-        //joystick2.y().toggleOnTrue(googlyEyeCommand);
+        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public SwerveDriveSubsystem getDrivetrain() {
