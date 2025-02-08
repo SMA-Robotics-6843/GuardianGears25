@@ -26,12 +26,12 @@ public class Robot extends TimedRobot {
   private final double VISION_DES_RANGE_m = 1.25;
 
   // Calculate drivetrain commands from Joystick values
-  public double forward = 0;
-  public double turn = 0;
+  public double forward = 10;
+  public double turn = 10;
 
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
+    m_robotContainer = new RobotContainer(this);
     photonCamera = new PhotonCamera("Arducam");
   }
 
@@ -97,6 +97,14 @@ public class Robot extends TimedRobot {
       // Put debug information to the dashboard
       SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
       SmartDashboard.putNumber("Vision Target Range (m)", targetRange); 
+  }
+
+  public double getForward() {
+    return forward;
+  }
+
+  public double getTurn() {
+    return turn;
   }
 
   @Override
