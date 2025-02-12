@@ -26,8 +26,8 @@ public class Robot extends TimedRobot {
   private final double VISION_DES_RANGE_m = 1.25;
 
   // Calculate drivetrain commands from Joystick values
-  public double forward = 10;
-  public double turn = 10;
+  public double forward = 0;
+  public double turn = 0;
 
 
   public Robot() {
@@ -90,21 +90,13 @@ public class Robot extends TimedRobot {
     }
 
       turn =
-              (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.MaxAngularRate;
+              (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.kMaxAngularSpeed;
       forward =
-              (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.MaxSpeed;
+              (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.kMaxLinearSpeed;
         
       // Put debug information to the dashboard
       SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
       SmartDashboard.putNumber("Vision Target Range (m)", targetRange); 
-  }
-
-  public double getForward() {
-    return forward;
-  }
-
-  public double getTurn() {
-    return turn;
   }
 
   @Override
