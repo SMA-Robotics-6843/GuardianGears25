@@ -14,20 +14,18 @@ import frc.robot.commands.SwerveDriveCommand;
 public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
-    public final Robot robot;
-    public final AprilTagAlign aprilTagAlign;
-    public final SwerveDriveCommand swerveDriveCommand = new SwerveDriveCommand();
-    public final SwerveDriveSubsystem swerveDriveSubsystem = swerveDriveCommand.getDrivetrain();
+    private final Robot robot;
+    private final AprilTagAlign aprilTagAlign;
+    private final SwerveDriveCommand swerveDriveCommand = new SwerveDriveCommand();
+    private final SwerveDriveSubsystem drivetrain = swerveDriveCommand.getDrivetrain();
 
     public RobotContainer(Robot m_robot) {
         this.robot = m_robot;
-        aprilTagAlign = new AprilTagAlign(swerveDriveSubsystem, robot, swerveDriveCommand);
+        aprilTagAlign = new AprilTagAlign(drivetrain, robot, swerveDriveCommand);
         configureBindings();
     }
 
     private void configureBindings() {
-        // Note that X is defined as forward according to WPILib convention,
-        // and Y is defined as to the left according to WPILib convention.
         swerveDriveCommand.getDrivetrain().setDefaultCommand(swerveDriveCommand);
         joystick.a().onTrue(aprilTagAlign);
     }

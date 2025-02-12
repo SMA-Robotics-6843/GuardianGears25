@@ -4,8 +4,6 @@
 
 package frc.robot.commands;
 
-import static edu.wpi.first.units.Units.*;
-
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 
@@ -16,22 +14,21 @@ import frc.robot.Telemetry;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import frc.robot.Constants;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class SwerveDriveCommand extends Command {
-    private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
-    private double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second max angular velocity
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(Constants.Swerve.MaxSpeed * 0.1).withRotationalDeadband(Constants.Swerve.MaxAngularRate * 0.1) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
-    private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final Telemetry logger = new Telemetry(Constants.Swerve.MaxSpeed);
   /** Creates a new SwerveDriveCommand. */
   public SwerveDriveCommand() {
     // Use addRequirements() here to declare subsystem dependencies.
@@ -46,10 +43,12 @@ public class SwerveDriveCommand extends Command {
   @Override
   public void execute() {
     // Drivetrain will execute this command periodically
+        // Note that X is defined as forward according to WPILib convention,
+        // and Y is defined as to the left according to WPILib convention.
         drivetrain.applyRequest(() ->
-        drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-            .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-            .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+        drive.withVelocityX(-joystick.getLeftY() * Constants.Swerve.MaxSpeed) // Drive forward with negative Y (forward)
+            .withVelocityY(-joystick.getLeftX() * Constants.Swerve.MaxSpeed) // Drive left with negative X (left)
+            .withRotationalRate(-joystick.getRightX() * Constants.Swerve.MaxAngularRate) // Drive counterclockwise with negative X (left)
     );
 
     joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));

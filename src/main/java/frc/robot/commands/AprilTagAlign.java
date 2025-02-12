@@ -45,12 +45,14 @@ public class AprilTagAlign extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    double forward = robot.getForward();
+    double turn = robot.getTurn();
     System.out.println("AprilTagAlign execute called");
-    System.out.println(robot.getForward());
-    System.out.println(robot.getTurn());
+    System.out.println(forward);
+    System.out.println(turn);
     swerveDriveCommand.getDrivetrain().applyRequest(() ->
-    drive.withVelocityX(robot.getForward())
-        .withRotationalRate(robot.getTurn())
+    drive.withVelocityX(forward)
+        .withRotationalRate(turn)
     );
   }
 

@@ -90,9 +90,9 @@ public class Robot extends TimedRobot {
     }
 
       turn =
-              (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.kMaxAngularSpeed;
+              (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.MaxAngularRate;
       forward =
-              (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.kMaxLinearSpeed;
+              (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.MaxSpeed;
         
       // Put debug information to the dashboard
       SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
