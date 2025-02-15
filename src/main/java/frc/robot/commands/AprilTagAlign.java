@@ -57,7 +57,9 @@ public class AprilTagAlign extends Command {
 
   // Called when the command is initially scheduled.
   @Override
-  public void initialize() {}
+  public void initialize() {
+    System.out.println("AprilTagAlign initialized");
+  }
 
   // Called every time the scheduler runs while the command is scheduled.
   @Override
@@ -101,7 +103,9 @@ public class AprilTagAlign extends Command {
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    System.out.println("AprilTagAlign ended");
+  }
 
   // Returns true when the command should end.
   @Override

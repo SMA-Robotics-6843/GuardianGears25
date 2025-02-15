@@ -20,7 +20,7 @@ public class RobotContainer {
     private final CommandXboxController joystick = new CommandXboxController(0);
 
     private final AprilTagAlign aprilTagAlign;
-    private final SwerveDriveCommand swerveDriveCommand = new SwerveDriveCommand();
+    private final SwerveDriveCommand swerveDriveCommand = new SwerveDriveCommand(joystick);
     private final SwerveDriveSubsystem drivetrain = swerveDriveCommand.getDrivetrain();
 
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
@@ -36,7 +36,7 @@ public class RobotContainer {
     private void configureBindings() {
 
         // Drivetrain controls
-        swerveDriveCommand.getDrivetrain().setDefaultCommand(swerveDriveCommand);
+        drivetrain.setDefaultCommand(swerveDriveCommand);
 
         joystick.x().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->

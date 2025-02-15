@@ -4,22 +4,27 @@
 
 package frc.robot;
 
+import org.photonvision.PhotonCamera;
+import org.photonvision.PhotonUtils;
+
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import frc.robot.commands.AprilTagAlign;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
+  private PhotonCamera photonCamera;
 
-  boolean targetVisible = AprilTagAlign.getTargetVisible();
-  double targetRange = AprilTagAlign.getTargetRange();
+  boolean targetVisible = false;
+  double targetRange;
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    photonCamera = new PhotonCamera("Arducam");
   }
 
   @Override
@@ -60,6 +65,19 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
+    var results = photonCamera.getLatestResult();
+    if (results.hasTargets()) {
+      var target = results.getBestTarget(); // Get the best target
+      targetRange = PhotonUtils.calculateDistanceToTargetMeters(
+              Units.inchesToMeters(20.5), // Measured with a tape measure, or in CAD.
+              Units.inchesToMeters(8.5),
+              Units.degreesToRadians(90), // Measured with a protractor, or in CAD.
+              Units.degreesToRadians(target.getPitch()));
+      targetVisible = true;
+    } else {
+      targetVisible = false;
+    }
+
       // Put debug information to the dashboard
       SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
       SmartDashboard.putNumber("Vision Target Range (m)", targetRange);
