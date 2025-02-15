@@ -4,35 +4,22 @@
 
 package frc.robot;
 
-import org.photonvision.PhotonCamera;
-import org.photonvision.PhotonUtils;
-
-import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.commands.AprilTagAlign;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
 
   private final RobotContainer m_robotContainer;
-  
-  private PhotonCamera photonCamera;
 
-  private final double VISION_TURN_kP = 0.01;
-  private final double VISION_DES_ANGLE_deg = 0.0;
-  private final double VISION_STRAFE_kP = 0.5;
-  private final double VISION_DES_RANGE_m = 1.25;
-
-  // Calculate drivetrain commands from Joystick values
-  public double forward = 0;
-  public double turn = 0;
-
+  boolean targetVisible = AprilTagAlign.getTargetVisible();
+  double targetRange = AprilTagAlign.getTargetRange();
 
   public Robot() {
-    m_robotContainer = new RobotContainer(this);
-    photonCamera = new PhotonCamera("Arducam");
+    m_robotContainer = new RobotContainer();
   }
 
   @Override
@@ -73,30 +60,9 @@ public class Robot extends TimedRobot {
 
   @Override
   public void teleopPeriodic() {
-             // Read in relevant data from the Camera
-        boolean targetVisible = false;
-        double targetYaw = 0.0;
-        double targetRange = 0.0;
-    var results = photonCamera.getLatestResult();
-     if (results.hasTargets()) {
-        var target = results.getBestTarget(); // Get the best target
-        targetYaw = target.getYaw();
-        targetRange = PhotonUtils.calculateDistanceToTargetMeters(
-                Units.inchesToMeters(20.5), // Measured with a tape measure, or in CAD.
-                Units.inchesToMeters(8.5), 
-                Units.degreesToRadians(90), // Measured with a protractor, or in CAD.
-                Units.degreesToRadians(target.getPitch()));
-        targetVisible = true;
-    }
-
-      turn =
-              (VISION_DES_ANGLE_deg - targetYaw) * VISION_TURN_kP * Constants.Swerve.kMaxAngularSpeed;
-      forward =
-              (VISION_DES_RANGE_m - targetRange) * VISION_STRAFE_kP * Constants.Swerve.kMaxLinearSpeed;
-        
       // Put debug information to the dashboard
       SmartDashboard.putBoolean("Vision Target Visible", targetVisible);
-      SmartDashboard.putNumber("Vision Target Range (m)", targetRange); 
+      SmartDashboard.putNumber("Vision Target Range (m)", targetRange);
   }
 
   @Override
