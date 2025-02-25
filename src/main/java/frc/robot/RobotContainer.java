@@ -8,9 +8,11 @@ import static edu.wpi.first.units.Units.*;
 
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
-import com.pathplanner.lib.commands.PathPlannerAuto;
+import com.pathplanner.lib.auto.AutoBuilder;
 
 import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
@@ -41,8 +43,13 @@ public class RobotContainer {
     public final GooglyEyeSubsystem GooglyEyeSubsystem = new GooglyEyeSubsystem();
     public final GooglyEyeCommand googlyEyeCommand = new GooglyEyeCommand(GooglyEyeSubsystem);
 
+    private final SendableChooser<Command> autoChooser;
+
     public RobotContainer() {
         configureBindings();
+
+        autoChooser = AutoBuilder.buildAutoChooser();
+        SmartDashboard.putData("Auto Chooser", autoChooser);
     }
 
     private void configureBindings() {
@@ -74,11 +81,15 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick2.y().toggleOnTrue(googlyEyeCommand);
+        joystick.y().toggleOnTrue(googlyEyeCommand);
+    }
+
+    public SwerveDriveSubsystem getDrivetrain() {
+        return drivetrain;
     }
 
     public Command getAutonomousCommand() {
-        return new PathPlannerAuto("New Auto");
+        return autoChooser.getSelected();
         //return Commands.print("No autonomous command configured");
     }
 }
