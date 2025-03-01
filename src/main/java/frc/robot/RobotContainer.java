@@ -21,9 +21,9 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.ElevatorUp;
+import frc.robot.commands.ElevatorDown;
 import frc.robot.commands.IntakeOn;
 import frc.robot.commands.Score;
-import frc.robot.commands.ElevatorDown;
 
 
 public class RobotContainer {

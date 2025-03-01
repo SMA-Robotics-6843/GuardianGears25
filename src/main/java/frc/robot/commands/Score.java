@@ -24,7 +24,7 @@ public class Score extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.spinIntake(-0.25);
+    intakeSubsystem.spinIntake(-1);
   }
 
   // Called once the command ends or is interrupted.

@@ -12,7 +12,7 @@ import edu.wpi.first.math.numbers.N3;
 
 public class Constants {
     public static class Vision {
-        public static final String kCameraName = "YOUR CAMERA NAME";
+        public static final String kCameraName = "Arducam";
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
         public static final Transform3d kRobotToCam =
                 new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
@@ -27,7 +27,19 @@ public class Constants {
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
 
-    public static final int elevatorMotorLeft = 2;
-    public static final int elevatorMotorRight = 3;
-    public static final int intakeMotor = 4;
+    public static class ElevatorConstants {
+        public static final int elevatorMotorLeftID = 2;
+        public static final int elevatorMotorRightID = 3;
+
+        public static final double elevatorMotorLeftkP = 0.1;
+        public static final double elevatorMotorLeftkI = 0;
+        public static final double elevatorMotorLeftkD = 0;
+        public static final double elevatorMotorRightkP = 0.1;
+        public static final double elevatorMotorRightkI = 0;
+        public static final double elevatorMotorRightkD = 0;
+    }
+
+    public static class IntakeConstants {
+        public static final int intakeMotorID = 4;
+    }
 }

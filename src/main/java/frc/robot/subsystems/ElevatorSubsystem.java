@@ -4,14 +4,18 @@
 
 package frc.robot.subsystems;
 
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import com.revrobotics.spark.SparkMax;
-import frc.robot.Constants;
+import frc.robot.Constants.ElevatorConstants;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
 
 public class ElevatorSubsystem extends SubsystemBase {
-  private SparkMax elevatorMotorLeft = new SparkMax(Constants.elevatorMotorLeft, MotorType.kBrushless);
-  private SparkMax elevatorMotorRight = new SparkMax(Constants.elevatorMotorRight, MotorType.kBrushless);
+  private SparkMax elevatorMotorLeft = new SparkMax(ElevatorConstants.elevatorMotorLeftID, MotorType.kBrushless);
+  private SparkMax elevatorMotorRight = new SparkMax(ElevatorConstants.elevatorMotorRightID, MotorType.kBrushless);
+  private final PIDController pid_elevatorMotorLeft = new PIDController(ElevatorConstants.elevatorMotorLeftkP, 0, 0);
+  private final PIDController pid_elevatorMotorRight = new PIDController(ElevatorConstants.elevatorMotorRightkP, 0, 0);
   
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {}
@@ -19,6 +23,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   public void MoveElevator(double speed) {
     elevatorMotorLeft.set(-speed);
     elevatorMotorRight.set(speed);
+    SmartDashboard.putNumber("elevatorMotorLeft", elevatorMotorLeft.getEncoder().getPosition());
+    SmartDashboard.putNumber("elevatorMotorRight", elevatorMotorRight.getEncoder().getPosition());
   }
 
   @Override
