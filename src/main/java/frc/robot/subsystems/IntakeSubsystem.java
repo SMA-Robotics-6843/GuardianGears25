@@ -4,24 +4,21 @@
 
 package frc.robot.subsystems;
 
-import com.revrobotics.spark.SparkLowLevel.MotorType;
-import com.revrobotics.spark.SparkMax;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import frc.robot.Constants;
 
+import com.revrobotics.spark.SparkMax;
+import com.revrobotics.spark.SparkLowLevel.MotorType;
 
-public class GooglyEyeSubsystem extends SubsystemBase {
-  static SparkMax googlyEyeMotor = new SparkMax(Constants.GOOGLY_EYE_MOTOR, MotorType.kBrushless);
+public class IntakeSubsystem extends SubsystemBase {
+  /** Creates a new IntakeSubsystem. */
+  private SparkMax intakeMotor = new SparkMax(Constants.intakeMotor, MotorType.kBrushless);
 
-  /** Creates a new GooglyEyeSubsystem. */
-  public GooglyEyeSubsystem() {
+  public IntakeSubsystem() {}
+
+  public void spinIntake(double speed) {
+    intakeMotor.set(speed);
   }
-
-  public void setSpeed(double speed) {
-    googlyEyeMotor.set(speed);
-  }
-
-  
 
   @Override
   public void periodic() {

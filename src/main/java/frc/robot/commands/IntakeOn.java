@@ -5,16 +5,16 @@
 package frc.robot.commands;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.GooglyEyeSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class GooglyEyeCommand extends Command {
-  private final GooglyEyeSubsystem googlyEyeSubsystem;
-  /** Creates a new GooglyEyeCommand. */
-  public GooglyEyeCommand(GooglyEyeSubsystem m_googlyEyeSubsystem) {
-    googlyEyeSubsystem = m_googlyEyeSubsystem;
+public class IntakeOn extends Command {
+  IntakeSubsystem intakeSubsystem;
+  /** Creates a new IntakeOn. */
+  public IntakeOn(IntakeSubsystem m_intakeSubsystem) {
+    intakeSubsystem = m_intakeSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_googlyEyeSubsystem);
+    addRequirements(m_intakeSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -24,12 +24,14 @@ public class GooglyEyeCommand extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    googlyEyeSubsystem.setSpeed(0.5);
+    intakeSubsystem.spinIntake(0.25);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {}
+  public void end(boolean interrupted) {
+    intakeSubsystem.spinIntake(0);
+  }
 
   // Returns true when the command should end.
   @Override

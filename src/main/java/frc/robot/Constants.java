@@ -27,5 +27,7 @@ public class Constants {
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
 
-    public static final int GOOGLY_EYE_MOTOR = 14;
+    public static final int elevatorMotorLeft = 2;
+    public static final int elevatorMotorRight = 3;
+    public static final int intakeMotor = 4;
 }

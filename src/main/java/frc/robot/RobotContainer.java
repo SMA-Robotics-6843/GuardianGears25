@@ -16,10 +16,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.GooglyEyeCommand;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import frc.robot.subsystems.GooglyEyeSubsystem;
+import frc.robot.subsystems.ElevatorSubsystem;
+import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.commands.ElevatorUp;
+import frc.robot.commands.IntakeOn;
+import frc.robot.commands.Score;
+import frc.robot.commands.ElevatorDown;
 
 
 public class RobotContainer {
@@ -39,9 +43,13 @@ public class RobotContainer {
     private final CommandXboxController joystick2 = new CommandXboxController(1);
     
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
+    public final ElevatorSubsystem elevator = new ElevatorSubsystem();
+    public final IntakeSubsystem intake = new IntakeSubsystem();
 
-    public final GooglyEyeSubsystem GooglyEyeSubsystem = new GooglyEyeSubsystem();
-    public final GooglyEyeCommand googlyEyeCommand = new GooglyEyeCommand(GooglyEyeSubsystem);
+    public final ElevatorUp elevatorUp = new ElevatorUp(elevator);
+    public final ElevatorDown elevatorDown = new ElevatorDown(elevator);
+    public final IntakeOn intakeOn = new IntakeOn(intake);
+    public final Score score = new Score(intake);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -64,7 +72,7 @@ public class RobotContainer {
             )
         );
 
-        joystick.a().whileTrue(drivetrain.applyRequest(() -> brake));
+        joystick.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
         joystick.b().whileTrue(drivetrain.applyRequest(() ->
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
@@ -81,7 +89,10 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.y().toggleOnTrue(googlyEyeCommand);
+        joystick.y().whileTrue(elevatorUp);
+        joystick.a().whileTrue(elevatorDown);
+        joystick.rightBumper().whileTrue(intakeOn);
+        joystick.rightTrigger().whileTrue(score);
     }
 
     public SwerveDriveSubsystem getDrivetrain() {
