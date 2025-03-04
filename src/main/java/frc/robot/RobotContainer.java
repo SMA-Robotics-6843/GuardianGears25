@@ -16,14 +16,14 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
+import frc.robot.commands.automations.ElevatorDown;
+import frc.robot.commands.automations.ElevatorUp;
+import frc.robot.commands.basic.IntakeOn;
+import frc.robot.commands.basic.Score;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.IntakeSubsystem;
-import frc.robot.commands.ElevatorUp;
-import frc.robot.commands.ElevatorDown;
-import frc.robot.commands.IntakeOn;
-import frc.robot.commands.Score;
 
 
 public class RobotContainer {
@@ -77,6 +77,7 @@ public class RobotContainer {
             point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
         ));
 
+        // TODO: Run sysid
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
         joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
@@ -85,10 +86,11 @@ public class RobotContainer {
         joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.leftBumper().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        joystick.rightStick().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
+        joystick.leftBumper().and(joystick.x()).whileTrue(elevator.elevatorToL2());
         joystick.y().whileTrue(elevatorUp);
         joystick.a().whileTrue(elevatorDown);
         joystick.rightBumper().whileTrue(intakeOn);
