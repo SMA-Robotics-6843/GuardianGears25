@@ -5,16 +5,16 @@
 package frc.robot.commands.basic;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class Score extends Command {
-  IntakeSubsystem intakeSubsystem;
+public class FMotorScore extends Command {
+  EndEffectorSubsystem endEffectorSubsystem;
   /** Creates a new Score. */
-  public Score(IntakeSubsystem m_intakeSubsystem) {
-    intakeSubsystem = m_intakeSubsystem;
+  public FMotorScore(EndEffectorSubsystem m_endEffectorSubsystem) {
+    endEffectorSubsystem = m_endEffectorSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_intakeSubsystem);
+    addRequirements(m_endEffectorSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -24,13 +24,13 @@ public class Score extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    intakeSubsystem.spinIntake(-1);
+    endEffectorSubsystem.spinFMotor(-1);
   }
 
   // Called once the command ends or is interrupted.
   @Override
   public void end(boolean interrupted) {
-    intakeSubsystem.spinIntake(0);
+    endEffectorSubsystem.spinFMotor(0);
   }
 
   // Returns true when the command should end.

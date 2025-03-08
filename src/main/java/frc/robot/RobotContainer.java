@@ -18,12 +18,14 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
 import frc.robot.commands.basic.ElevatorDown;
 import frc.robot.commands.basic.ElevatorUp;
-import frc.robot.commands.basic.IntakeOn;
-import frc.robot.commands.basic.Score;
+import frc.robot.commands.basic.EndEffectorDown;
+import frc.robot.commands.basic.EndEffectorUp;
+import frc.robot.commands.basic.FMotorIntake;
+import frc.robot.commands.basic.FMotorScore;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
-import frc.robot.subsystems.IntakeSubsystem;
+import frc.robot.subsystems.EndEffectorSubsystem;
 
 
 public class RobotContainer {
@@ -40,16 +42,18 @@ public class RobotContainer {
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
     private final CommandXboxController joystick = new CommandXboxController(0);
-    private final CommandXboxController joystick2 = new CommandXboxController(1);
+   // private final CommandXboxController joystick2 = new CommandXboxController(1);
     
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
-    public final IntakeSubsystem intake = new IntakeSubsystem();
+    public final EndEffectorSubsystem endEffector = new EndEffectorSubsystem();
 
     public final ElevatorUp elevatorUp = new ElevatorUp(elevator);
     public final ElevatorDown elevatorDown = new ElevatorDown(elevator);
-    public final IntakeOn intakeOn = new IntakeOn(intake);
-    public final Score score = new Score(intake);
+    public final FMotorIntake intake = new FMotorIntake(endEffector);
+    public final FMotorScore score = new FMotorScore(endEffector);
+    public final EndEffectorUp endEffectorUp = new EndEffectorUp(endEffector);
+    public final EndEffectorDown endEffectorDown = new EndEffectorDown(endEffector);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -90,11 +94,23 @@ public class RobotContainer {
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
-        joystick.leftBumper().and(joystick.x()).whileTrue(elevator.elevatorToL2());
+        // Normal
         joystick.y().whileTrue(elevatorUp);
         joystick.a().whileTrue(elevatorDown);
-        joystick.rightBumper().whileTrue(intakeOn);
+        joystick.rightBumper().whileTrue(intake);
         joystick.rightTrigger().whileTrue(score);
+
+        // Left bumper
+        joystick.leftBumper().and(joystick.rightBumper()).whileTrue(endEffectorUp);
+        joystick.leftBumper().and(joystick.rightTrigger()).whileTrue(endEffectorDown);
+        joystick.leftBumper().and(joystick.a()).whileTrue(elevator.elevatorToL1());
+        joystick.leftBumper().and(joystick.x()).whileTrue(elevator.elevatorToL2());
+        joystick.leftBumper().and(joystick.b()).whileTrue(elevator.elevatorToL3());
+        joystick.leftBumper().and(joystick.y()).whileTrue(elevator.elevatorToL4());
+        joystick.leftBumper().and(joystick.povDown()).whileTrue(endEffector.endEffectorToL1());
+        joystick.leftBumper().and(joystick.povLeft()).whileTrue(endEffector.endEffectorToL2());
+        joystick.leftBumper().and(joystick.povRight()).whileTrue(endEffector.endEffectorToL3());
+        joystick.leftBumper().and(joystick.povUp()).whileTrue(endEffector.endEffectorToL4());
     }
 
     public SwerveDriveSubsystem getDrivetrain() {

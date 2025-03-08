@@ -28,9 +28,27 @@ public class Constants {
     }
 
     public static class ElevatorConstants {
+        // Movement
+        public static final double elevatorMotorLeftSpeed = .25;
+        public static final double elevatorMotorRightSpeed = .25;
+
+        public static final double elevatorMotorLeftL1SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorRightL1SetpointRotationsPerSecond = 1;
+
+        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = 1;
+
+        public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorRightL3SetpointRotationsPerSecond = 1;
+
+        public static final double elevatorMotorLeftL4SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorRightL4SetpointRotationsPerSecond = 1;
+
+        // CAN IDs
         public static final int elevatorMotorLeftID = 2;
         public static final int elevatorMotorRightID = 3;
 
+        // PID tunings
         public static final double elevatorMotorLeftkP = 0.1;
         public static final double elevatorMotorLeftkI = 0;
         public static final double elevatorMotorLeftkD = 0;
@@ -39,7 +57,20 @@ public class Constants {
         public static final double elevatorMotorRightkD = 0;
     }
 
-    public static class IntakeConstants {
-        public static final int intakeMotorID = 4;
+    public static class EndEffectorConstants {
+        // Movement
+        public static final double sassyMotorL1SetpointRotationsPerSecond = 0;
+        public static final double sassyMotorL2SetpointRotationsPerSecond = .48;
+        public static final double sassyMotorL3SetpointRotationsPerSecond = 0;
+        public static final double sassyMotorL4SetpointRotationsPerSecond = 0;
+
+        // CAN IDs
+        public static final int fMotorID = 4;
+        public static final int sassyMotorID = 5;
+
+        // PID tunings
+        public static final double sassyMotorkP = 0.3;
+        public static final double sassyMotorkI = 0;
+        public static final double sassyMotorkD = 0;
     }
 }
