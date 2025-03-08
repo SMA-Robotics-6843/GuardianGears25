@@ -18,16 +18,16 @@ import frc.robot.Constants.ElevatorConstants;
 public class ElevatorSubsystem extends SubsystemBase {
   // Left motor
   private SparkMax elevatorMotorLeft = new SparkMax(ElevatorConstants.elevatorMotorLeftID, MotorType.kBrushless);
-  private double elevatorMotorLeftEncoder = elevatorMotorLeft.getEncoder().getPosition();
   private final PIDController elevatorMotorLeftPID = new PIDController(ElevatorConstants.elevatorMotorLeftkP, 0, 0);
   
   // Right motor
   private SparkMax elevatorMotorRight = new SparkMax(ElevatorConstants.elevatorMotorRightID, MotorType.kBrushless);
-  private double elevatorMotorRightEncoder = elevatorMotorRight.getEncoder().getPosition();
   private final PIDController elevatorMotorRightPID = new PIDController(ElevatorConstants.elevatorMotorRightkP, 0, 0);
   
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
+    
+
     setDefaultCommand(
 
         runOnce(
@@ -41,15 +41,13 @@ public class ElevatorSubsystem extends SubsystemBase {
                 })
 
             .andThen(run(() -> {
-              SmartDashboard.putNumber("elevatorMotorLeftEncoder", elevatorMotorLeftEncoder);
-              SmartDashboard.putNumber("elevatorMotorRightEncoder", elevatorMotorRightEncoder);
             }))
 
             .withName("Idle"));
   }
 
   public void moveElevator(double speed) {
-    elevatorMotorLeft.set(speed);
+    elevatorMotorLeft.set(-speed);
     elevatorMotorRight.set(speed);
   }
 
@@ -60,13 +58,14 @@ public class ElevatorSubsystem extends SubsystemBase {
 
                 () -> {
 
-                  elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeftEncoder, leftSetpointRotationsPerSecond));
-                  elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRightEncoder, rightSetpointRotationsPerSecond));
+                  elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), leftSetpointRotationsPerSecond));
+                  elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), rightSetpointRotationsPerSecond));
 
                 })).withName("Move Elevator");
   }
 
   public Command elevatorToL2() {
+    // left setpoint should be negative, right should be positive
     return moveElevatorToSetpoint(26, 26);
   }
 
@@ -77,5 +76,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putNumber("elevatorMotorLeftEncoder", elevatorMotorLeft.getEncoder().getPosition());
+    SmartDashboard.putNumber("elevatorMotorRightEncoder", elevatorMotorRight.getEncoder().getPosition());
   }
 }
