@@ -39,8 +39,8 @@ public class Constants {
         public static final double elevatorMotorLeftL1SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL1SetpointRotationsPerSecond = 1;
 
-        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 9;
-        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -9;
+        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -1;
 
         public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL3SetpointRotationsPerSecond = 1;
