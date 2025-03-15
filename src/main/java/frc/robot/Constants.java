@@ -15,38 +15,38 @@ public class Constants {
         public static final String kCameraName = "Arducam";
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
         public static final Transform3d kRobotToCam =
-                new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
+        new Transform3d(new Translation3d(0.5, 0.0, 0.5), new Rotation3d(0, 0, 0));
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout =
                 AprilTagFieldLayout.loadField(AprilTagFields.kDefaultField);
-
+                
         // The standard deviations of our vision estimated poses, which affect correction rate
         // (Fake values. Experiment and determine estimation noise on an actual robot.)
         public static final Matrix<N3, N1> kSingleTagStdDevs = VecBuilder.fill(4, 4, 8);
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
-
+    
     public static class ElevatorConstants {
+        // CAN IDs
+        public static final int elevatorMotorLeftID = 2;
+        public static final int elevatorMotorRightID = 3;
+
         // Movement
-        public static final double elevatorMotorLeftSpeed = .25;
-        public static final double elevatorMotorRightSpeed = .25;
+        public static final double elevatorMotorUpSpeed = -.25;
+        public static final double elevatorMotorDownSpeed = .25;
 
         public static final double elevatorMotorLeftL1SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL1SetpointRotationsPerSecond = 1;
 
-        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 1;
-        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 9;
+        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -9;
 
         public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL3SetpointRotationsPerSecond = 1;
 
         public static final double elevatorMotorLeftL4SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL4SetpointRotationsPerSecond = 1;
-
-        // CAN IDs
-        public static final int elevatorMotorLeftID = 2;
-        public static final int elevatorMotorRightID = 3;
 
         // PID tunings
         public static final double elevatorMotorLeftkP = 0.1;
@@ -58,18 +58,23 @@ public class Constants {
     }
 
     public static class EndEffectorConstants {
-        // Movement
-        public static final double sassyMotorL1SetpointRotationsPerSecond = 0;
-        public static final double sassyMotorL2SetpointRotationsPerSecond = .48;
-        public static final double sassyMotorL3SetpointRotationsPerSecond = 0;
-        public static final double sassyMotorL4SetpointRotationsPerSecond = 0;
-
         // CAN IDs
         public static final int fMotorID = 4;
         public static final int sassyMotorID = 5;
 
+        // Movement
+        public static final double sassyMotorUpSpeed = -.25;
+        public static final double sassyMotorDownSpeed = .25;
+        public static final double fMotorInSpeed = .25;
+        public static final double fMotorOutSpeed = -1;
+
+        public static final double sassyMotorL1SetpointRotationsPerSecond = 0;
+        public static final double sassyMotorL2SetpointRotationsPerSecond = -20;
+        public static final double sassyMotorL3SetpointRotationsPerSecond = 0;
+        public static final double sassyMotorL4SetpointRotationsPerSecond = 0;
+
         // PID tunings
-        public static final double sassyMotorkP = 0.3;
+        public static final double sassyMotorkP = 0.1;
         public static final double sassyMotorkI = 0;
         public static final double sassyMotorkD = 0;
     }

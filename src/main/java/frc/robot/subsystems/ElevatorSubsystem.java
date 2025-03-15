@@ -24,6 +24,8 @@ public class ElevatorSubsystem extends SubsystemBase {
   private SparkMax elevatorMotorRight = new SparkMax(elevatorMotorRightID, MotorType.kBrushless);
   private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI, elevatorMotorRightkD);
   
+  public boolean isElevatorAtSetpoint;
+
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
 
@@ -50,37 +52,18 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorMotorRight.set(speed);
   }
 
-  public Command moveElevatorToSetpoint(double leftSetpointRotationsPerSecond, double rightSetpointRotationsPerSecond) {
-    return parallel(
-
-            run( 
-
-                () -> {
-
-                  elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), leftSetpointRotationsPerSecond));
-                  elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), rightSetpointRotationsPerSecond));
-
-                })).withName("Move Elevator to Setpoint");
+  public void moveElevatorToSetpoint(double leftSetpointRotationsPerSecond, double rightSetpointRotationsPerSecond) {
+    elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), leftSetpointRotationsPerSecond));
+    elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), rightSetpointRotationsPerSecond));
   }
 
-  public Command elevatorToL1() {
-    // left setpoint should be negative, right should be positive
-    return moveElevatorToSetpoint(elevatorMotorLeftL1SetpointRotationsPerSecond, elevatorMotorRightL1SetpointRotationsPerSecond);
-  }
-
-  public Command elevatorToL2() {
-    // left setpoint should be negative, right should be positive
-    return moveElevatorToSetpoint(elevatorMotorLeftL2SetpointRotationsPerSecond, elevatorMotorRightL2SetpointRotationsPerSecond);
-  }
-  
-  public Command elevatorToL3() {
-    // left setpoint should be negative, right should be positive
-    return moveElevatorToSetpoint(elevatorMotorLeftL3SetpointRotationsPerSecond, elevatorMotorRightL3SetpointRotationsPerSecond);
-  }
-
-  public Command elevatorToL4() {
-    // left setpoint should be negative, right should be positive
-    return moveElevatorToSetpoint(elevatorMotorLeftL4SetpointRotationsPerSecond, elevatorMotorRightL4SetpointRotationsPerSecond);
+  public boolean getIsElevatorAtSetPoint() {
+    if(elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint()) {
+      isElevatorAtSetpoint = true;
+    } else {
+      isElevatorAtSetpoint = false;
+    }
+    return isElevatorAtSetpoint;
   }
 
   @Override

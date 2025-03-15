@@ -16,17 +16,25 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.basic.ElevatorDown;
-import frc.robot.commands.basic.ElevatorUp;
-import frc.robot.commands.basic.EndEffectorDown;
-import frc.robot.commands.basic.EndEffectorUp;
-import frc.robot.commands.basic.FMotorIntake;
-import frc.robot.commands.basic.FMotorScore;
+import frc.robot.commands.automation.ElevatorToL1;
+import frc.robot.commands.automation.ElevatorToL2;
+import frc.robot.commands.automation.ElevatorToL3;
+import frc.robot.commands.automation.ElevatorToL4;
+import frc.robot.commands.automation.EndEffectorToL1;
+import frc.robot.commands.automation.EndEffectorToL2;
+import frc.robot.commands.automation.EndEffectorToL3;
+import frc.robot.commands.automation.EndEffectorToL4;
+import frc.robot.commands.basic.elevator.ElevatorDown;
+import frc.robot.commands.basic.elevator.ElevatorUp;
+import frc.robot.commands.basic.endeffector.EndEffectorDown;
+import frc.robot.commands.basic.endeffector.EndEffectorUp;
+import frc.robot.commands.basic.endeffector.FMotorIn;
+import frc.robot.commands.basic.endeffector.FMotorOut;
+import frc.robot.commands.groups.ScoreCoralL2;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
-
 
 public class RobotContainer {
     private double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top speed
@@ -34,15 +42,15 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.1).withRotationalDeadband(MaxAngularRate * 0.1) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
 
-    private final CommandXboxController joystick = new CommandXboxController(0);
-   // private final CommandXboxController joystick2 = new CommandXboxController(1);
+    private final CommandXboxController controller = new CommandXboxController(0);
+   // private final CommandXboxController controller2 = new CommandXboxController(1);
     
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
@@ -50,10 +58,22 @@ public class RobotContainer {
 
     public final ElevatorUp elevatorUp = new ElevatorUp(elevator);
     public final ElevatorDown elevatorDown = new ElevatorDown(elevator);
-    public final FMotorIntake intake = new FMotorIntake(endEffector);
-    public final FMotorScore score = new FMotorScore(endEffector);
+    public final FMotorIn fMotorIn = new FMotorIn(endEffector);
+    public final FMotorOut fMotorOut = new FMotorOut(endEffector);
     public final EndEffectorUp endEffectorUp = new EndEffectorUp(endEffector);
     public final EndEffectorDown endEffectorDown = new EndEffectorDown(endEffector);
+
+    public final ElevatorToL1 elevatorToL1 = new ElevatorToL1(elevator);
+    public final ElevatorToL2 elevatorToL2 = new ElevatorToL2(elevator);
+    public final ElevatorToL3 elevatorToL3 = new ElevatorToL3(elevator);
+    public final ElevatorToL4 elevatorToL4 = new ElevatorToL4(elevator);
+
+    public final EndEffectorToL1 endEffectorToL1 = new EndEffectorToL1(endEffector);
+    public final EndEffectorToL2 endEffectorToL2 = new EndEffectorToL2(endEffector);
+    public final EndEffectorToL3 endEffectorToL3 = new EndEffectorToL3(endEffector);
+    public final EndEffectorToL4 endEffectorToL4 = new EndEffectorToL4(endEffector);
+
+    public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
 
     private final SendableChooser<Command> autoChooser;
 
@@ -70,47 +90,48 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-joystick.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-joystick.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-joystick.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
 
-        joystick.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
-        joystick.b().whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-joystick.getLeftY(), -joystick.getLeftX()))
+        controller.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
+        controller.leftBumper().and(controller.leftTrigger()).whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))
         ));
 
         // TODO: Run sysid
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        joystick.back().and(joystick.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        joystick.back().and(joystick.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        joystick.start().and(joystick.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        joystick.start().and(joystick.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
         // reset the field-centric heading on left bumper press
-        joystick.rightStick().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        controller.rightStick().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
 
         drivetrain.registerTelemetry(logger::telemeterize);
 
         // Normal
-        joystick.y().whileTrue(elevatorUp);
-        joystick.a().whileTrue(elevatorDown);
-        joystick.rightBumper().whileTrue(intake);
-        joystick.rightTrigger().whileTrue(score);
+        controller.y().and(controller.leftBumper().negate()).whileTrue(endEffectorUp);
+        controller.a().and(controller.leftBumper().negate()).whileTrue(endEffectorDown);
+        controller.x().and(controller.leftBumper().negate()).whileTrue(fMotorOut);
+        controller.b().and(controller.leftBumper().negate()).whileTrue(fMotorIn);
+        controller.rightBumper().and(controller.leftBumper().negate()).whileTrue(elevatorUp);
+        controller.rightTrigger().and(controller.leftBumper().negate()).whileTrue(elevatorDown);
 
         // Left bumper
-        joystick.leftBumper().and(joystick.rightBumper()).whileTrue(endEffectorUp);
-        joystick.leftBumper().and(joystick.rightTrigger()).whileTrue(endEffectorDown);
-        joystick.leftBumper().and(joystick.a()).whileTrue(elevator.elevatorToL1());
-        joystick.leftBumper().and(joystick.x()).whileTrue(elevator.elevatorToL2());
-        joystick.leftBumper().and(joystick.b()).whileTrue(elevator.elevatorToL3());
-        joystick.leftBumper().and(joystick.y()).whileTrue(elevator.elevatorToL4());
-        joystick.leftBumper().and(joystick.povDown()).whileTrue(endEffector.endEffectorToL1());
-        joystick.leftBumper().and(joystick.povLeft()).whileTrue(endEffector.endEffectorToL2());
-        joystick.leftBumper().and(joystick.povRight()).whileTrue(endEffector.endEffectorToL3());
-        joystick.leftBumper().and(joystick.povUp()).whileTrue(endEffector.endEffectorToL4());
+        controller.a().and(controller.leftBumper()).whileTrue(endEffectorToL1);
+        controller.x().and(controller.leftBumper()).onTrue(scoreCoralL2);
+        controller.b().and(controller.leftBumper()).whileTrue(endEffectorToL3);
+        controller.y().and(controller.leftBumper()).whileTrue(endEffectorToL4);
+
+        controller.povDown().and(controller.leftBumper()).whileTrue(elevatorToL1);
+        controller.povLeft().and(controller.leftBumper()).whileTrue(elevatorToL2);
+        controller.povRight().and(controller.leftBumper()).whileTrue(elevatorToL3);
+        controller.povUp().and(controller.leftBumper()).whileTrue(elevatorToL4);
     }
 
     public SwerveDriveSubsystem getDrivetrain() {

@@ -2,16 +2,19 @@
 // Open Source Software; you can modify and/or share it under the terms of
 // the WPILib BSD license file in the root directory of this project.
 
-package frc.robot.commands.basic;
+package frc.robot.commands.automation;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.EndEffectorSubsystem;
+import static frc.robot.Constants.EndEffectorConstants.sassyMotorL2SetpointRotationsPerSecond;
+import static frc.robot.Constants.EndEffectorConstants.fMotorOutSpeed;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class EndEffectorDown extends Command {
-  EndEffectorSubsystem endEffectorSubsystem;
-  /** Creates a new EndEffectorDown. */
-  public EndEffectorDown(EndEffectorSubsystem m_endEffectorSubsystem) {
+public class EndEffectorToL2 extends Command {
+  private EndEffectorSubsystem endEffectorSubsystem;
+  
+  /** Creates a new EndEffectorToL2. */
+  public EndEffectorToL2(EndEffectorSubsystem m_endEffectorSubsystem) {
     endEffectorSubsystem = m_endEffectorSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
     addRequirements(m_endEffectorSubsystem);
@@ -24,14 +27,14 @@ public class EndEffectorDown extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    endEffectorSubsystem.spinSassyMotor(.25);
+    System.out.println("EndEffectorToL2");
+    endEffectorSubsystem.moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
+    endEffectorSubsystem.spinFMotorAtSetpoint(fMotorOutSpeed);
   }
 
   // Called once the command ends or is interrupted.
   @Override
-  public void end(boolean interrupted) {
-    endEffectorSubsystem.spinSassyMotor(0);
-  }
+  public void end(boolean interrupted) {}
 
   // Returns true when the command should end.
   @Override
