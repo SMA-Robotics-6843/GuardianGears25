@@ -36,14 +36,16 @@ public class Constants {
         public static final double elevatorMotorUpSpeed = -.25;
         public static final double elevatorMotorDownSpeed = .25;
 
+        public static final double elevatorMotorsFeedingSetpointRotationsPerSecond = 7;
+
         public static final double elevatorMotorLeftL1SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL1SetpointRotationsPerSecond = 1;
 
-        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 1;
-        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -1;
-
-        public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 1;
-        public static final double elevatorMotorRightL3SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 26;
+        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -26;
+        
+        public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 52;
+        public static final double elevatorMotorRightL3SetpointRotationsPerSecond = -52;
 
         public static final double elevatorMotorLeftL4SetpointRotationsPerSecond = 1;
         public static final double elevatorMotorRightL4SetpointRotationsPerSecond = 1;
@@ -67,10 +69,11 @@ public class Constants {
         public static final double sassyMotorDownSpeed = .25;
         public static final double fMotorInSpeed = .25;
         public static final double fMotorOutSpeed = -1;
+        public static final double fMotorOutSpeedL1 = -.75;
 
         public static final double sassyMotorL1SetpointRotationsPerSecond = 0;
-        public static final double sassyMotorL2SetpointRotationsPerSecond = -20;
-        public static final double sassyMotorL3SetpointRotationsPerSecond = 0;
+        public static final double sassyMotorL2SetpointRotationsPerSecond = 7.5;
+        public static final double sassyMotorL3SetpointRotationsPerSecond = 6.5;
         public static final double sassyMotorL4SetpointRotationsPerSecond = 0;
 
         // PID tunings

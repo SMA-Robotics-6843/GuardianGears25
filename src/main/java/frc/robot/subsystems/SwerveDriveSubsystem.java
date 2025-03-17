@@ -2,7 +2,10 @@ package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
 
+import java.io.IOException;
 import java.util.function.Supplier;
+
+import org.json.simple.parser.ParseException;
 
 import com.ctre.phoenix6.SignalLogger;
 import com.ctre.phoenix6.Utils;
@@ -14,12 +17,15 @@ import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.config.PIDConstants;
 import com.pathplanner.lib.config.RobotConfig;
 import com.pathplanner.lib.controllers.PPHolonomicDriveController;
+import com.pathplanner.lib.path.PathConstraints;
+import com.pathplanner.lib.path.PathPlannerPath;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.DriverStation;
 import edu.wpi.first.wpilibj.DriverStation.Alliance;
 import edu.wpi.first.wpilibj.Notifier;
@@ -39,16 +45,23 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
+    public Command pathfindingCommand;
+    PathPlannerPath path;
+    // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
+    PathConstraints constraints = new PathConstraints(
+            3.0, 4.0,
+            Units.degreesToRadians(540), Units.degreesToRadians(720));
+    
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
     /* Red alliance sees forward as 180 degrees (toward blue alliance wall) */
     private static final Rotation2d kRedAlliancePerspectiveRotation = Rotation2d.k180deg;
     /* Keep track if we've ever applied the operator perspective before or not */
     private boolean m_hasAppliedOperatorPerspective = false;
-
+    
     /** Swerve request to apply during robot-centric path following */
     private final SwerveRequest.ApplyRobotSpeeds m_pathApplyRobotSpeeds = new SwerveRequest.ApplyRobotSpeeds();
-
+    
     /* Swerve requests to apply during SysId characterization */
     private final SwerveRequest.SysIdSwerveTranslation m_translationCharacterization = new SwerveRequest.SysIdSwerveTranslation();
     private final SwerveRequest.SysIdSwerveSteerGains m_steerCharacterization = new SwerveRequest.SysIdSwerveSteerGains();
@@ -71,7 +84,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
     );
 
     /* SysId routine for characterizing steer. This is used to find PID gains for the steer motors. */
-    @SuppressWarnings("unused") // TODO: Remove this suppression after implementing the steer characterization
     private final SysIdRoutine m_sysIdRoutineSteer = new SysIdRoutine(
         new SysIdRoutine.Config(
             null,        // Use default ramp rate (1 V/s)
@@ -92,7 +104,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
      * This is used to find PID gains for the FieldCentricFacingAngle HeadingController.
      * See the documentation of SwerveRequest.SysIdSwerveRotation for info on importing the log to SysId.
      */
-    @SuppressWarnings("unused") // TODO: Remove this suppression after implementing the rotation characterization
     private final SysIdRoutine m_sysIdRoutineRotation = new SysIdRoutine(
         new SysIdRoutine.Config(
             /* This is in radians per second², but SysId only supports "volts per second" */
@@ -136,7 +147,17 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
         if (Utils.isSimulation()) {
             startSimThread();
         }
+
+        try {
+           path = PathPlannerPath.fromPathFile("New Path");
+         //  pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
+       } catch (IOException | ParseException e) {
+           e.printStackTrace();
+           DriverStation.reportError("Failed to load path file", e.getStackTrace());
+       }  
+
         configureAutoBuilder();
+
     }
 
     /**
@@ -162,6 +183,13 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             startSimThread();
         }
         configureAutoBuilder();
+
+       /*  try {
+            path = PathPlannerPath.fromPathFile("New Path");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            DriverStation.reportError("Failed to load path file", e.getStackTrace());
+        } */
     }
 
     /**
@@ -195,6 +223,13 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             startSimThread();
         }
         configureAutoBuilder();
+
+      /*  try {
+            path = PathPlannerPath.fromPathFile("New Path");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            DriverStation.reportError("Failed to load path file", e.getStackTrace());
+        } */
     }
 
     private void configureAutoBuilder() {

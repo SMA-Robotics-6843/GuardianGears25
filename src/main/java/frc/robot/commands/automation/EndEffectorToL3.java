@@ -27,6 +27,7 @@ public class EndEffectorToL3 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
+    System.out.println("EndEffectorToL3");
     endEffectorSubsystem.moveEndEffectorToSetpoint(sassyMotorL3SetpointRotationsPerSecond);
     endEffectorSubsystem.spinFMotorAtSetpoint(fMotorOutSpeed);
   }

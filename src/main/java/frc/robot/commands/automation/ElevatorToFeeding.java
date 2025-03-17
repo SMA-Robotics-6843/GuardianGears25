@@ -5,19 +5,18 @@
 package frc.robot.commands.automation;
 
 import edu.wpi.first.wpilibj2.command.Command;
-import frc.robot.subsystems.EndEffectorSubsystem;
-import static frc.robot.Constants.EndEffectorConstants.sassyMotorL1SetpointRotationsPerSecond;
-import static frc.robot.Constants.EndEffectorConstants.fMotorOutSpeed;
+import frc.robot.subsystems.ElevatorSubsystem;
+import static frc.robot.Constants.ElevatorConstants.elevatorMotorsFeedingSetpointRotationsPerSecond;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
-public class EndEffectorToL1 extends Command {
-  private EndEffectorSubsystem endEffectorSubsystem;
+public class ElevatorToFeeding extends Command {
+  private ElevatorSubsystem elevatorSubsystem;
 
-  /** Creates a new EndEffectorToL1. */
-  public EndEffectorToL1(EndEffectorSubsystem m_endEffectorSubsystem) {
-    endEffectorSubsystem = m_endEffectorSubsystem;
+  /** Creates a new ElevatorToFeeding. */
+  public ElevatorToFeeding(ElevatorSubsystem m_elevatorSubsystem) {
+    elevatorSubsystem = m_elevatorSubsystem;
     // Use addRequirements() here to declare subsystem dependencies.
-    addRequirements(m_endEffectorSubsystem);
+    addRequirements(m_elevatorSubsystem);
   }
 
   // Called when the command is initially scheduled.
@@ -27,8 +26,7 @@ public class EndEffectorToL1 extends Command {
   // Called every time the scheduler runs while the command is scheduled.
   @Override
   public void execute() {
-    endEffectorSubsystem.moveEndEffectorToSetpoint(sassyMotorL1SetpointRotationsPerSecond);
-    endEffectorSubsystem.spinFMotorAtSetpoint(fMotorOutSpeed);
+    elevatorSubsystem.moveElevatorToSetpoint(elevatorMotorsFeedingSetpointRotationsPerSecond, -elevatorMotorsFeedingSetpointRotationsPerSecond);
   }
 
   // Called once the command ends or is interrupted.

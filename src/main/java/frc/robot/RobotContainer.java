@@ -9,6 +9,7 @@ import static edu.wpi.first.units.Units.*;
 import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
 import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
+import com.pathplanner.lib.auto.NamedCommands;
 
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
@@ -16,14 +17,11 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.automation.ElevatorToL1;
+import frc.robot.commands.automation.ElevatorToFeeding;
 import frc.robot.commands.automation.ElevatorToL2;
 import frc.robot.commands.automation.ElevatorToL3;
-import frc.robot.commands.automation.ElevatorToL4;
-import frc.robot.commands.automation.EndEffectorToL1;
 import frc.robot.commands.automation.EndEffectorToL2;
 import frc.robot.commands.automation.EndEffectorToL3;
-import frc.robot.commands.automation.EndEffectorToL4;
 import frc.robot.commands.basic.elevator.ElevatorDown;
 import frc.robot.commands.basic.elevator.ElevatorUp;
 import frc.robot.commands.basic.endeffector.EndEffectorDown;
@@ -31,6 +29,7 @@ import frc.robot.commands.basic.endeffector.EndEffectorUp;
 import frc.robot.commands.basic.endeffector.FMotorIn;
 import frc.robot.commands.basic.endeffector.FMotorOut;
 import frc.robot.commands.groups.ScoreCoralL2;
+import frc.robot.commands.groups.ScoreCoralL3;
 import frc.robot.generated.TunerConstants;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -63,23 +62,23 @@ public class RobotContainer {
     public final EndEffectorUp endEffectorUp = new EndEffectorUp(endEffector);
     public final EndEffectorDown endEffectorDown = new EndEffectorDown(endEffector);
 
-    public final ElevatorToL1 elevatorToL1 = new ElevatorToL1(elevator);
     public final ElevatorToL2 elevatorToL2 = new ElevatorToL2(elevator);
     public final ElevatorToL3 elevatorToL3 = new ElevatorToL3(elevator);
-    public final ElevatorToL4 elevatorToL4 = new ElevatorToL4(elevator);
-
-    public final EndEffectorToL1 endEffectorToL1 = new EndEffectorToL1(endEffector);
+    public final ElevatorToFeeding elevatorToFeeding = new ElevatorToFeeding(elevator);
+    
     public final EndEffectorToL2 endEffectorToL2 = new EndEffectorToL2(endEffector);
     public final EndEffectorToL3 endEffectorToL3 = new EndEffectorToL3(endEffector);
-    public final EndEffectorToL4 endEffectorToL4 = new EndEffectorToL4(endEffector);
-
+    
     public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
-
+    public final ScoreCoralL3 scoreCoralL3 = new ScoreCoralL3(elevator, endEffector);
+    
     private final SendableChooser<Command> autoChooser;
-
+    
     public RobotContainer() {
         configureBindings();
 
+        NamedCommands.registerCommand("ScoreCoralL3", scoreCoralL3);
+        
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
@@ -123,15 +122,12 @@ public class RobotContainer {
         controller.rightTrigger().and(controller.leftBumper().negate()).whileTrue(elevatorDown);
 
         // Left bumper
-        controller.a().and(controller.leftBumper()).whileTrue(endEffectorToL1);
-        controller.x().and(controller.leftBumper()).onTrue(scoreCoralL2);
-        controller.b().and(controller.leftBumper()).whileTrue(endEffectorToL3);
-        controller.y().and(controller.leftBumper()).whileTrue(endEffectorToL4);
-
-        controller.povDown().and(controller.leftBumper()).whileTrue(elevatorToL1);
+        controller.x().and(controller.leftBumper()).whileTrue(scoreCoralL2);
+        controller.b().and(controller.leftBumper()).whileTrue(scoreCoralL3);
+        
         controller.povLeft().and(controller.leftBumper()).whileTrue(elevatorToL2);
         controller.povRight().and(controller.leftBumper()).whileTrue(elevatorToL3);
-        controller.povUp().and(controller.leftBumper()).whileTrue(elevatorToL4);
+        controller.rightTrigger().and(controller.leftBumper()).whileTrue(elevatorToFeeding);
     }
 
     public SwerveDriveSubsystem getDrivetrain() {
