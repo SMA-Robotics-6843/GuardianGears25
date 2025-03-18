@@ -6,11 +6,13 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+import static frc.robot.constants.Constants.ElevatorConstants.*;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
-import static frc.robot.Constants.ElevatorConstants.*;
 
 public class ElevatorSubsystem extends SubsystemBase {
   // Left motor
@@ -49,9 +51,15 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorMotorRight.set(speed);
   }
 
-  public void moveElevatorToSetpoint(double leftSetpointRotationsPerSecond, double rightSetpointRotationsPerSecond) {
-    elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), leftSetpointRotationsPerSecond));
-    elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), rightSetpointRotationsPerSecond));
+  public Command moveElevatorToSetpoint(double setpointRotationsPerSecond) {
+    return parallel( 
+
+            run( () -> {
+
+              elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpointRotationsPerSecond));
+              elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), -setpointRotationsPerSecond));
+             
+            }));
   }
 
   public boolean getIsElevatorAtSetPoint() {
@@ -61,6 +69,21 @@ public class ElevatorSubsystem extends SubsystemBase {
       isElevatorAtSetpoint = false;
     }
     return isElevatorAtSetpoint;
+  }
+  
+  public Command ElevatorToL2() {
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
+    return moveElevatorToSetpoint(elevatorMotorsL2SetpointRotationsPerSecond);
+  }
+
+  public Command ElevatorToL3() {
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
+    return moveElevatorToSetpoint(elevatorMotorsL3SetpointRotationsPerSecond);
+  }
+
+  public Command ElevatorToFeeding() {
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
+    return moveElevatorToSetpoint(elevatorMotorsFeedingSetpointRotationsPerSecond);
   }
 
   @Override

@@ -11,17 +11,13 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
+import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.automation.ElevatorToFeeding;
-import frc.robot.commands.automation.ElevatorToL2;
-import frc.robot.commands.automation.ElevatorToL3;
-import frc.robot.commands.automation.EndEffectorToL2;
-import frc.robot.commands.automation.EndEffectorToL3;
 import frc.robot.commands.basic.elevator.ElevatorDown;
 import frc.robot.commands.basic.elevator.ElevatorUp;
 import frc.robot.commands.basic.endeffector.EndEffectorDown;
@@ -30,7 +26,8 @@ import frc.robot.commands.basic.endeffector.FMotorIn;
 import frc.robot.commands.basic.endeffector.FMotorOut;
 import frc.robot.commands.groups.ScoreCoralL2;
 import frc.robot.commands.groups.ScoreCoralL3;
-import frc.robot.generated.TunerConstants;
+import frc.robot.constants.TunerConstants;
+import static frc.robot.constants.Constants.slewRateLimit;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
@@ -41,12 +38,13 @@ public class RobotContainer {
 
     /* Setting up bindings for necessary control of the swerve drive platform */
     private final SwerveRequest.FieldCentric drive = new SwerveRequest.FieldCentric()
-            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 10% deadband
+            .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 5% deadband
             .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
     private final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
+    private final SlewRateLimiter limiter = new SlewRateLimiter(slewRateLimit);
 
     private final CommandXboxController controller = new CommandXboxController(0);
    // private final CommandXboxController controller2 = new CommandXboxController(1);
@@ -62,12 +60,12 @@ public class RobotContainer {
     public final EndEffectorUp endEffectorUp = new EndEffectorUp(endEffector);
     public final EndEffectorDown endEffectorDown = new EndEffectorDown(endEffector);
 
-    public final ElevatorToL2 elevatorToL2 = new ElevatorToL2(elevator);
-    public final ElevatorToL3 elevatorToL3 = new ElevatorToL3(elevator);
-    public final ElevatorToFeeding elevatorToFeeding = new ElevatorToFeeding(elevator);
+    public final Command elevatorToL2 = elevator.ElevatorToL2();
+    public final Command elevatorToL3 = elevator.ElevatorToL3();
+    public final Command elevatorToFeeding = elevator.ElevatorToFeeding();
     
-    public final EndEffectorToL2 endEffectorToL2 = new EndEffectorToL2(endEffector);
-    public final EndEffectorToL3 endEffectorToL3 = new EndEffectorToL3(endEffector);
+    public final Command endEffectorToL2 = endEffector.EndEffectorToL2();
+    public final Command endEffectorToL3 = endEffector.EndEffectorToL3();
     
     public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
     public final ScoreCoralL3 scoreCoralL3 = new ScoreCoralL3(elevator, endEffector);
@@ -77,6 +75,7 @@ public class RobotContainer {
     public RobotContainer() {
         configureBindings();
 
+        NamedCommands.registerCommand("ScoreCoralL2", scoreCoralL2);
         NamedCommands.registerCommand("ScoreCoralL3", scoreCoralL3);
         
         autoChooser = AutoBuilder.buildAutoChooser();
@@ -89,9 +88,9 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(-controller.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
-                    .withVelocityY(-controller.getLeftX() * MaxSpeed) // Drive left with negative X (left)
-                    .withRotationalRate(-controller.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(limiter.calculate(-controller.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
+                    .withVelocityY(limiter.calculate(-controller.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
+                    .withRotationalRate(limiter.calculate(-controller.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
             )
         );
 

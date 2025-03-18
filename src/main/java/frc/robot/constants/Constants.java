@@ -1,4 +1,4 @@
-package frc.robot;
+package frc.robot.constants;
 
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
@@ -11,6 +11,8 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
 public class Constants {
+    public static final double slewRateLimit = .05;
+
     public static class Vision {
         public static final String kCameraName = "Arducam";
         // Cam mounted facing forward, half a meter forward of center, half a meter up from center.
@@ -38,22 +40,15 @@ public class Constants {
 
         public static final double elevatorMotorsFeedingSetpointRotationsPerSecond = 7;
 
-        public static final double elevatorMotorLeftL1SetpointRotationsPerSecond = 1;
-        public static final double elevatorMotorRightL1SetpointRotationsPerSecond = 1;
-
-        public static final double elevatorMotorLeftL2SetpointRotationsPerSecond = 26;
-        public static final double elevatorMotorRightL2SetpointRotationsPerSecond = -26;
+        public static final double elevatorMotorsL2SetpointRotationsPerSecond = 26;
         
-        public static final double elevatorMotorLeftL3SetpointRotationsPerSecond = 52;
-        public static final double elevatorMotorRightL3SetpointRotationsPerSecond = -52;
-
-        public static final double elevatorMotorLeftL4SetpointRotationsPerSecond = 1;
-        public static final double elevatorMotorRightL4SetpointRotationsPerSecond = 1;
+        public static final double elevatorMotorsL3SetpointRotationsPerSecond = 52;
 
         // PID tunings
         public static final double elevatorMotorLeftkP = 0.1;
         public static final double elevatorMotorLeftkI = 0;
         public static final double elevatorMotorLeftkD = 0;
+        
         public static final double elevatorMotorRightkP = 0.1;
         public static final double elevatorMotorRightkI = 0;
         public static final double elevatorMotorRightkD = 0;
@@ -71,10 +66,8 @@ public class Constants {
         public static final double fMotorOutSpeed = -1;
         public static final double fMotorOutSpeedL1 = -.75;
 
-        public static final double sassyMotorL1SetpointRotationsPerSecond = 0;
         public static final double sassyMotorL2SetpointRotationsPerSecond = 7.5;
         public static final double sassyMotorL3SetpointRotationsPerSecond = 6.5;
-        public static final double sassyMotorL4SetpointRotationsPerSecond = 0;
 
         // PID tunings
         public static final double sassyMotorkP = 0.1;

@@ -6,9 +6,11 @@ package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
-import static frc.robot.Constants.EndEffectorConstants.*;
+import static edu.wpi.first.wpilibj2.command.Commands.parallel;
+import static frc.robot.constants.Constants.EndEffectorConstants.*;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -46,15 +48,40 @@ public class EndEffectorSubsystem extends SubsystemBase {
     sassyMotor.set(speed);
   }
 
-  public void moveEndEffectorToSetpoint(double setpointRotationsPerSecond) {
-    sassyMotor.set(sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpointRotationsPerSecond));
-    System.out.println("moveEndEffectorToSetpoint");
+  public Command moveEndEffectorToSetpoint(double setpointRotationsPerSecond) {
+    return parallel(
+        run(
+
+            () -> {
+
+              sassyMotor
+                  .set(sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpointRotationsPerSecond));
+              System.out.println("moveEndEffectorToSetpoint");
+
+            }
+
+        ));
+
+  }
+
+  public boolean getIsEndEffectorAtSetPoint() {
+    return sassyMotorPID.atSetpoint();
   }
 
   public void spinFMotorAtSetpoint(double speed) {
-    if(sassyMotorPID.atSetpoint()) {
+    if(getIsEndEffectorAtSetPoint()) {
       fMotor.set(speed);
     }
+  }
+
+  public Command EndEffectorToL2() {
+    SmartDashboard.putBoolean("isEndEffectorAtSetpoint", getIsEndEffectorAtSetPoint());
+    return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
+  }
+
+  public Command EndEffectorToL3() {
+    SmartDashboard.putBoolean("isEndEffectorAtSetpoint", getIsEndEffectorAtSetPoint());
+    return moveEndEffectorToSetpoint(sassyMotorL3SetpointRotationsPerSecond);
   }
 
   @Override

@@ -5,8 +5,6 @@
 package frc.robot.commands.groups;
 
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
-import frc.robot.commands.automation.ElevatorToL2;
-import frc.robot.commands.automation.EndEffectorToL2;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -15,10 +13,13 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCoralL2 extends SequentialCommandGroup {
 
+  ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
+
   /** Creates a new ScoreCoralL2. */
   public ScoreCoralL2(ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ElevatorToL2(m_elevatorSubsystem).withTimeout(1), new EndEffectorToL2(m_endEffectorSubsystem).withTimeout(1));
+    addCommands(m_elevatorSubsystem.ElevatorToL2().withTimeout(1), m_endEffectorSubsystem.EndEffectorToL2().withTimeout(1));
   }
 }

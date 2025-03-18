@@ -4,7 +4,7 @@
 
 package frc.robot.commands.basic.endeffector;
 
-import static frc.robot.Constants.EndEffectorConstants.fMotorInSpeed;
+import static frc.robot.constants.Constants.EndEffectorConstants.fMotorInSpeed;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.EndEffectorSubsystem;

@@ -24,12 +24,13 @@
 
 package frc.robot;
 
-import static frc.robot.Constants.Vision.*;
-
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+
+import static frc.robot.constants.Constants.Vision.*;
+
 import java.util.List;
 import java.util.Optional;
 import org.photonvision.EstimatedRobotPose;

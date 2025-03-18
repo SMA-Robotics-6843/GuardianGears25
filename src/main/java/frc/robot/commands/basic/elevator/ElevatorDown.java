@@ -4,9 +4,10 @@
 
 package frc.robot.commands.basic.elevator;
 
+import static frc.robot.constants.Constants.ElevatorConstants.elevatorMotorDownSpeed;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import frc.robot.subsystems.ElevatorSubsystem;
-import static frc.robot.Constants.ElevatorConstants.elevatorMotorDownSpeed;
 
 /* You should consider using the more terse Command factories API instead https://docs.wpilib.org/en/stable/docs/software/commandbased/organizing-command-based.html#defining-commands */
 public class ElevatorDown extends Command {

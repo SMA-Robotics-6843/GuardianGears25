@@ -4,21 +4,22 @@
 
 package frc.robot.commands.groups;
 
-import edu.wpi.first.wpilibj2.command.ParallelCommandGroup;
-import frc.robot.commands.automation.ElevatorToL3;
-import frc.robot.commands.automation.EndEffectorToL3;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
 // NOTE:  Consider using this command inline, rather than writing a subclass.  For more
 // information, see:
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
-public class ScoreCoralL3 extends ParallelCommandGroup {
+public class ScoreCoralL3 extends SequentialCommandGroup {
+
+  ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
+  EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
 
   /** Creates a new ScoreCoralL3. */
   public ScoreCoralL3(ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(new ElevatorToL3(m_elevatorSubsystem), new EndEffectorToL3(m_endEffectorSubsystem));
+    addCommands(m_elevatorSubsystem.ElevatorToL3().withTimeout(1), m_endEffectorSubsystem.EndEffectorToL3().withTimeout(1));
   }
 }
