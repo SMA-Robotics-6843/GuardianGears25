@@ -13,9 +13,6 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 // https://docs.wpilib.org/en/stable/docs/software/commandbased/convenience-features.html
 public class ScoreCoralL2 extends SequentialCommandGroup {
 
-  ElevatorSubsystem m_elevatorSubsystem = new ElevatorSubsystem();
-  EndEffectorSubsystem m_endEffectorSubsystem = new EndEffectorSubsystem();
-
   /** Creates a new ScoreCoralL2. */
   public ScoreCoralL2(ElevatorSubsystem m_elevatorSubsystem, EndEffectorSubsystem m_endEffectorSubsystem) {
     // Add your commands in the addCommands() call, e.g.

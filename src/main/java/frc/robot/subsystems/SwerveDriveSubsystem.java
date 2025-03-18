@@ -146,6 +146,8 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             startSimThread();
         }
 
+        configureAutoBuilder();
+
         try {
            path = PathPlannerPath.fromPathFile("New Path");
            pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
@@ -153,9 +155,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
            e.printStackTrace();
            DriverStation.reportError("Failed to load path file", e.getStackTrace());
        }  
-
-        configureAutoBuilder();
-
     }
 
     /**
