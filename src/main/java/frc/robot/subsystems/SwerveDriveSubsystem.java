@@ -45,9 +45,8 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
     private double m_lastSimTime;
 
     public Command pathfindingCommand;
-    PathPlannerPath path;
-    // Create the constraints to use while pathfinding. The constraints defined in the path will only be used for the path.
-    PathConstraints constraints = new PathConstraints(
+    private PathPlannerPath path;
+    private PathConstraints constraints = new PathConstraints(
             3.0, 4.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
     
@@ -149,7 +148,7 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
 
         try {
            path = PathPlannerPath.fromPathFile("New Path");
-         //  pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
+           pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
        } catch (IOException | ParseException e) {
            e.printStackTrace();
            DriverStation.reportError("Failed to load path file", e.getStackTrace());
@@ -182,13 +181,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             startSimThread();
         }
         configureAutoBuilder();
-
-       /*  try {
-            path = PathPlannerPath.fromPathFile("New Path");
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            DriverStation.reportError("Failed to load path file", e.getStackTrace());
-        } */
     }
 
     /**
@@ -222,13 +214,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             startSimThread();
         }
         configureAutoBuilder();
-
-      /*  try {
-            path = PathPlannerPath.fromPathFile("New Path");
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-            DriverStation.reportError("Failed to load path file", e.getStackTrace());
-        } */
     }
 
     private void configureAutoBuilder() {
