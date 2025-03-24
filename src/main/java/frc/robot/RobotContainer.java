@@ -11,24 +11,21 @@ import com.ctre.phoenix6.swerve.SwerveRequest;
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
 
-import edu.wpi.first.math.filter.SlewRateLimiter;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commands.basic.elevator.ElevatorDown;
-import frc.robot.commands.basic.elevator.ElevatorUp;
-import frc.robot.commands.basic.endeffector.EndEffectorDown;
-import frc.robot.commands.basic.endeffector.EndEffectorUp;
-import frc.robot.commands.basic.endeffector.FMotorIn;
-import frc.robot.commands.basic.endeffector.FMotorOut;
-import frc.robot.commands.groups.ScoreCoralL2;
-import frc.robot.commands.groups.ScoreCoralL3;
 import frc.robot.constants.TunerConstants;
-import static frc.robot.constants.Constants.slewRateLimit;
+import frc.robot.sequentialcommandgroups.CoralFromFeeding;
+import frc.robot.sequentialcommandgroups.ReleaseClimber;
+import frc.robot.sequentialcommandgroups.ScoreCoralL1;
+import frc.robot.sequentialcommandgroups.ScoreCoralL2;
+import frc.robot.sequentialcommandgroups.ScoreCoralL3;
+
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 
@@ -44,40 +41,59 @@ public class RobotContainer {
     private final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
 
     private final Telemetry logger = new Telemetry(MaxSpeed);
-    private final SlewRateLimiter limiter = new SlewRateLimiter(slewRateLimit);
 
-    private final CommandXboxController controller = new CommandXboxController(0);
-   // private final CommandXboxController controller2 = new CommandXboxController(1);
+    private final CommandXboxController controller1 = new CommandXboxController(0); // Driver controller
+    private final CommandXboxController controller2 = new CommandXboxController(1); // Operator controller
     
+    // Subsystems
     public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
     public final ElevatorSubsystem elevator = new ElevatorSubsystem();
     public final EndEffectorSubsystem endEffector = new EndEffectorSubsystem();
+    public final ClimberSubsystem climber = new ClimberSubsystem(endEffector);
 
-    public final ElevatorUp elevatorUp = new ElevatorUp(elevator);
-    public final ElevatorDown elevatorDown = new ElevatorDown(elevator);
-    public final FMotorIn fMotorIn = new FMotorIn(endEffector);
-    public final FMotorOut fMotorOut = new FMotorOut(endEffector);
-    public final EndEffectorUp endEffectorUp = new EndEffectorUp(endEffector);
-    public final EndEffectorDown endEffectorDown = new EndEffectorDown(endEffector);
-
-    public final Command elevatorToL2 = elevator.ElevatorToL2();
-    public final Command elevatorToL3 = elevator.ElevatorToL3();
-    public final Command elevatorToFeeding = elevator.ElevatorToFeeding();
+    // Commands
+    public final Command elevatorUp = elevator.ElevatorUp();
+    public final Command elevatorDown = elevator.ElevatorDown();
+    public final Command fMotorIn = endEffector.FMotorIn();
+    public final Command fMotorOut = endEffector.FMotorOut();
+    public final Command endEffectorUp = endEffector.EndEffectorUp();
+    public final Command endEffectorDown = endEffector.EndEffectorDown();
+    public final Command windClimber = climber.WindClimber();
+    public final Command unwindClimber = climber.UnwindClimber();
     
-    public final Command endEffectorToL2 = endEffector.EndEffectorToL2();
-    public final Command endEffectorToL3 = endEffector.EndEffectorToL3();
-    
+    // Use sequential command groups
+    public final CoralFromFeeding coralFromFeeding = new CoralFromFeeding(elevator, endEffector);
+    public final ScoreCoralL1 scoreCoralL1 = new ScoreCoralL1(elevator, endEffector);
     public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
     public final ScoreCoralL3 scoreCoralL3 = new ScoreCoralL3(elevator, endEffector);
+    public final ReleaseClimber releaseClimber = new ReleaseClimber(climber);
+
+    // Paths for pathfinding
+    public final Command lineUpWithLeftBranch1 = drivetrain.lineUpWithLeftBranch1Command;
+    public final Command lineUpWithLeftBranch2 = drivetrain.lineUpWithLeftBranch2Command;
+    public final Command lineUpWithLeftBranch3 = drivetrain.lineUpWithLeftBranch3Command;
+    public final Command lineUpWithLeftBranch4 = drivetrain.lineUpWithLeftBranch4Command;
+    public final Command lineUpWithLeftBranch5 = drivetrain.lineUpWithLeftBranch5Command;
+    public final Command lineUpWithLeftBranch6 = drivetrain.lineUpWithLeftBranch6Command;
+    public final Command lineUpWithRightBranch1 = drivetrain.lineUpWithRightBranch1Command;
+    public final Command lineUpWithRightBranch2 = drivetrain.lineUpWithRightBranch2Command;
+    public final Command lineUpWithRightBranch3 = drivetrain.lineUpWithRightBranch3Command;
+    public final Command lineUpWithRightBranch4 = drivetrain.lineUpWithRightBranch4Command;
+    public final Command lineUpWithRightBranch5 = drivetrain.lineUpWithRightBranch5Command;
+    public final Command lineUpWithRightBranch6 = drivetrain.lineUpWithRightBranch6Command;
+    public final Command feedLeft = drivetrain.feedLeftCommand;
+    public final Command feedRight = drivetrain.feedRightCommand;
     
     private final SendableChooser<Command> autoChooser;
     
     public RobotContainer() {
-        configureBindings();
-
+        NamedCommands.registerCommand("CoralFromFeeding", coralFromFeeding);
         NamedCommands.registerCommand("ScoreCoralL2", scoreCoralL2);
         NamedCommands.registerCommand("ScoreCoralL3", scoreCoralL3);
+        NamedCommands.registerCommand("ReleaseClimber", releaseClimber);
         
+        configureBindings();
+
         autoChooser = AutoBuilder.buildAutoChooser();
         SmartDashboard.putData("Auto Chooser", autoChooser);
     }
@@ -88,45 +104,108 @@ public class RobotContainer {
         drivetrain.setDefaultCommand(
             // Drivetrain will execute this command periodically
             drivetrain.applyRequest(() ->
-                drive.withVelocityX(limiter.calculate(-controller.getLeftY() * MaxSpeed)) // Drive forward with negative Y (forward)
-                    .withVelocityY(limiter.calculate(-controller.getLeftX() * MaxSpeed)) // Drive left with negative X (left)
-                    .withRotationalRate(limiter.calculate(-controller.getRightX() * MaxAngularRate)) // Drive counterclockwise with negative X (left)
+                drive.withVelocityX(-controller1.getLeftY() * MaxSpeed) // Drive forward with negative Y (forward)
+                    .withVelocityY(-controller1.getLeftX() * MaxSpeed) // Drive left with negative X (left)
+                    .withRotationalRate(-controller1.getRightX() * MaxAngularRate) // Drive counterclockwise with negative X (left)
             )
         );
-
-        controller.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
-        controller.leftBumper().and(controller.leftTrigger()).whileTrue(drivetrain.applyRequest(() ->
-            point.withModuleDirection(new Rotation2d(-controller.getLeftY(), -controller.getLeftX()))
+        
+        // Controller 1 (driver)
+        controller1.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
+        controller1.leftBumper().whileTrue(drivetrain.applyRequest(() ->
+            point.withModuleDirection(new Rotation2d(-controller1.getLeftY(), -controller1.getLeftX()))
         ));
+
+        // reset the field-centric heading on right stick press
+        controller1.rightStick().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+
+        controller1.a()
+        .and(controller1.leftTrigger().negate())
+        .and(controller1.rightTrigger().negate())
+        .whileTrue(windClimber);
+        controller1.y()
+        .and(controller1.leftTrigger().negate())
+        .and(controller1.rightTrigger().negate())
+        .whileTrue(unwindClimber);
+        controller1.b()
+        .and(controller1.leftTrigger().negate())
+        .and(controller1.rightTrigger().negate())
+        .onTrue(releaseClimber);
 
         // TODO: Run sysid
         // Run SysId routines when holding back/start and X/Y.
         // Note that each routine should be run exactly once in a single log.
-        controller.back().and(controller.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
-        controller.back().and(controller.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
-        controller.start().and(controller.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
-        controller.start().and(controller.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
+        controller1.back().and(controller1.y()).whileTrue(drivetrain.sysIdDynamic(Direction.kForward));
+        controller1.back().and(controller1.x()).whileTrue(drivetrain.sysIdDynamic(Direction.kReverse));
+        controller1.start().and(controller1.y()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
+        controller1.start().and(controller1.x()).whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
 
-        // reset the field-centric heading on left bumper press
-        controller.rightStick().onTrue(drivetrain.runOnce(() -> drivetrain.seedFieldCentric()));
+        // Pathfinding
+            // Left side, left trigger
+        controller1.povDown()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch1);
+        controller1.povLeft()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch2);
+        controller1.povUp()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch3);
+        controller1.a()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch4);
+        controller1.x()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch5);
+        controller1.y()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch6);
+        controller1.povRight()
+            .and(controller1.leftTrigger()).and(controller1.rightTrigger().negate())
+            .whileTrue(feedLeft);
 
-        drivetrain.registerTelemetry(logger::telemeterize);
-
+            // Right side, right trigger
+        controller1.povDown()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch1);
+        controller1.povRight()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch2);
+        controller1.povUp()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch3);
+        controller1.a()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch4);
+        controller1.b()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch5);
+        controller1.y()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(lineUpWithLeftBranch6);
+        controller1.x()
+            .and(controller1.rightTrigger()).and(controller1.leftTrigger().negate())
+            .whileTrue(feedRight);
+        
+        
+        // Controller 2 (operator)
         // Normal
-        controller.y().and(controller.leftBumper().negate()).whileTrue(endEffectorUp);
-        controller.a().and(controller.leftBumper().negate()).whileTrue(endEffectorDown);
-        controller.x().and(controller.leftBumper().negate()).whileTrue(fMotorOut);
-        controller.b().and(controller.leftBumper().negate()).whileTrue(fMotorIn);
-        controller.rightBumper().and(controller.leftBumper().negate()).whileTrue(elevatorUp);
-        controller.rightTrigger().and(controller.leftBumper().negate()).whileTrue(elevatorDown);
+        controller2.y().and(controller2.leftBumper().negate()).whileTrue(endEffectorUp);
+        controller2.a().and(controller2.leftBumper().negate()).whileTrue(endEffectorDown);
+        controller2.x().and(controller2.leftBumper().negate()).whileTrue(fMotorOut);
+        controller2.b().and(controller2.leftBumper().negate()).whileTrue(fMotorIn);
+        controller2.rightBumper().and(controller2.leftBumper().negate()).whileTrue(elevatorUp);
+        controller2.rightTrigger().and(controller2.leftBumper().negate()).whileTrue(elevatorDown);
 
         // Left bumper
-        controller.x().and(controller.leftBumper()).whileTrue(scoreCoralL2);
-        controller.b().and(controller.leftBumper()).whileTrue(scoreCoralL3);
-        
-        controller.povLeft().and(controller.leftBumper()).whileTrue(elevatorToL2);
-        controller.povRight().and(controller.leftBumper()).whileTrue(elevatorToL3);
-        controller.rightTrigger().and(controller.leftBumper()).whileTrue(elevatorToFeeding);
+            // Sequential command groups
+        controller2.y().and(controller2.leftBumper()).whileTrue(coralFromFeeding);
+        controller2.a().and(controller2.leftBumper()).whileTrue(scoreCoralL1);
+        controller2.x().and(controller2.leftBumper()).whileTrue(scoreCoralL2);
+        controller2.b().and(controller2.leftBumper()).whileTrue(scoreCoralL3);
+
+        // Telemetry
+        drivetrain.registerTelemetry(logger::telemeterize);
     }
 
     public SwerveDriveSubsystem getDrivetrain() {
@@ -135,6 +214,5 @@ public class RobotContainer {
 
     public Command getAutonomousCommand() {
         return autoChooser.getSelected();
-        //return Commands.print("No autonomous command configured");
     }
 }

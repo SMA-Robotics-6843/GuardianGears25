@@ -17,12 +17,14 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 public class ElevatorSubsystem extends SubsystemBase {
   // Left motor
   private SparkMax elevatorMotorLeft = new SparkMax(elevatorMotorLeftID, MotorType.kBrushless);
-  private final PIDController elevatorMotorLeftPID = new PIDController(elevatorMotorLeftkP, elevatorMotorLeftkI, elevatorMotorLeftkD);
-  
+  private final PIDController elevatorMotorLeftPID = new PIDController(elevatorMotorLeftkP, elevatorMotorLeftkI,
+      elevatorMotorLeftkD);
+
   // Right motor
   private SparkMax elevatorMotorRight = new SparkMax(elevatorMotorRightID, MotorType.kBrushless);
-  private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI, elevatorMotorRightkD);
-  
+  private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI,
+      elevatorMotorRightkD);
+
   public boolean isElevatorAtSetpoint;
 
   /** Creates a new ElevatorSubsystem. */
@@ -32,45 +34,72 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         runOnce(
 
-                () -> {
-                    
-                  elevatorMotorLeft.disable();
+            () -> {
 
-                  elevatorMotorRight.disable();
+              elevatorMotorLeft.disable();
 
-                })
+              elevatorMotorRight.disable();
+
+            })
 
             .andThen(run(() -> {
             }))
 
             .withName("Idle"));
+            
   }
 
-  public void moveElevator(double speed) {
-    elevatorMotorLeft.set(-speed);
-    elevatorMotorRight.set(speed);
+  public Command moveElevator(double speed) {
+    return parallel(
+
+        run(
+
+            () -> {
+
+              elevatorMotorLeft.set(speed);
+              elevatorMotorRight.set(-speed);
+
+            }
+
+        ));
   }
 
   public Command moveElevatorToSetpoint(double setpointRotationsPerSecond) {
-    return parallel( 
+    return parallel(
 
-            run( () -> {
+        run(() -> {
 
-              elevatorMotorLeft.set(elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpointRotationsPerSecond));
-              elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), -setpointRotationsPerSecond));
-             
-            }));
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpointRotationsPerSecond));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -setpointRotationsPerSecond));
+
+        }));
+        
   }
 
   public boolean getIsElevatorAtSetPoint() {
-    if(elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint()) {
+    if (elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint()) {
       isElevatorAtSetpoint = true;
     } else {
       isElevatorAtSetpoint = false;
     }
     return isElevatorAtSetpoint;
   }
-  
+
+  public Command ElevatorUp() {
+    return moveElevator(elevatorMotorsUpSpeed);
+  }
+
+  public Command ElevatorDown() {
+    return moveElevator(elevatorMotorsDownSpeed);
+  }
+
+  public Command ElevatorToL1() {
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
+    return moveElevatorToSetpoint(elevatorMotorsL1SetpointRotationsPerSecond);
+  }
+
   public Command ElevatorToL2() {
     SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     return moveElevatorToSetpoint(elevatorMotorsL2SetpointRotationsPerSecond);

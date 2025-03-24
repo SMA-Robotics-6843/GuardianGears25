@@ -8,7 +8,7 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveDriveSubsystem;
-import edu.wpi.first.wpilibj.DataLogManager;
+//import edu.wpi.first.wpilibj.DataLogManager;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
@@ -22,7 +22,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     drivetrain = m_robotContainer.getDrivetrain();
     vision = new Vision();
-    DataLogManager.start();
+    //DataLogManager.start();
   }
   
   @Override

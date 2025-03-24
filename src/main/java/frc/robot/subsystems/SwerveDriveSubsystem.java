@@ -44,11 +44,39 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
     private Notifier m_simNotifier = null;
     private double m_lastSimTime;
 
-    public Command pathfindingCommand;
-    private PathPlannerPath path;
+    private PathPlannerPath lineUpWithLeftBranch1;
+    private PathPlannerPath lineUpWithLeftBranch2;
+    private PathPlannerPath lineUpWithLeftBranch3;
+    private PathPlannerPath lineUpWithLeftBranch4;
+    private PathPlannerPath lineUpWithLeftBranch5;
+    private PathPlannerPath lineUpWithLeftBranch6;
+    private PathPlannerPath lineUpWithRightBranch1;
+    private PathPlannerPath lineUpWithRightBranch2;
+    private PathPlannerPath lineUpWithRightBranch3;
+    private PathPlannerPath lineUpWithRightBranch4;
+    private PathPlannerPath lineUpWithRightBranch5;
+    private PathPlannerPath lineUpWithRightBranch6;
+    private PathPlannerPath feedLeft;
+    private PathPlannerPath feedRight;
+
     private PathConstraints constraints = new PathConstraints(
             3.0, 4.0,
             Units.degreesToRadians(540), Units.degreesToRadians(720));
+
+    public Command lineUpWithLeftBranch1Command;
+    public Command lineUpWithLeftBranch2Command;
+    public Command lineUpWithLeftBranch3Command;
+    public Command lineUpWithLeftBranch4Command;
+    public Command lineUpWithLeftBranch5Command;
+    public Command lineUpWithLeftBranch6Command;
+    public Command lineUpWithRightBranch1Command;
+    public Command lineUpWithRightBranch2Command;
+    public Command lineUpWithRightBranch3Command;
+    public Command lineUpWithRightBranch4Command;
+    public Command lineUpWithRightBranch5Command;
+    public Command lineUpWithRightBranch6Command;
+    public Command feedLeftCommand;
+    public Command feedRightCommand;
     
     /* Blue alliance sees forward as 0 degrees (toward red alliance wall) */
     private static final Rotation2d kBlueAlliancePerspectiveRotation = Rotation2d.kZero;
@@ -149,12 +177,39 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
         configureAutoBuilder();
 
         try {
-           path = PathPlannerPath.fromPathFile("New Path");
-           pathfindingCommand = AutoBuilder.pathfindThenFollowPath(path, constraints);
-       } catch (IOException | ParseException e) {
-           e.printStackTrace();
-           DriverStation.reportError("Failed to load path file", e.getStackTrace());
-       }  
+            lineUpWithLeftBranch1 = PathPlannerPath.fromPathFile("Line Up With Left Branch 1");
+            lineUpWithLeftBranch2 = PathPlannerPath.fromPathFile("Line Up With Left Branch 2");
+            lineUpWithLeftBranch3 = PathPlannerPath.fromPathFile("Line Up With Left Branch 3");
+            lineUpWithLeftBranch4 = PathPlannerPath.fromPathFile("Line Up With Left Branch 4");
+            lineUpWithLeftBranch5 = PathPlannerPath.fromPathFile("Line Up With Left Branch 5");
+            lineUpWithLeftBranch6 = PathPlannerPath.fromPathFile("Line Up With Left Branch 6");
+            lineUpWithRightBranch1 = PathPlannerPath.fromPathFile("Line Up With Right Branch 1");
+            lineUpWithRightBranch2 = PathPlannerPath.fromPathFile("Line Up With Right Branch 2");
+            lineUpWithRightBranch3 = PathPlannerPath.fromPathFile("Line Up With Right Branch 3");
+            lineUpWithRightBranch4 = PathPlannerPath.fromPathFile("Line Up With Right Branch 4");
+            lineUpWithRightBranch5 = PathPlannerPath.fromPathFile("Line Up With Right Branch 5");
+            lineUpWithRightBranch6 = PathPlannerPath.fromPathFile("Line Up With Right Branch 6");
+            feedLeft = PathPlannerPath.fromPathFile("Feed Left");
+            feedRight = PathPlannerPath.fromPathFile("Feed Right");
+        } catch (IOException | ParseException e) {
+            e.printStackTrace();
+            DriverStation.reportError("Failed to load path file", e.getStackTrace());
+        }
+
+        lineUpWithLeftBranch1Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch1, constraints);
+        lineUpWithLeftBranch2Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch2, constraints);
+        lineUpWithLeftBranch3Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch3, constraints);
+        lineUpWithLeftBranch4Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch4, constraints);
+        lineUpWithLeftBranch5Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch5, constraints);
+        lineUpWithLeftBranch6Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch6, constraints);
+        lineUpWithRightBranch1Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch1, constraints);
+        lineUpWithRightBranch2Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch2, constraints);
+        lineUpWithRightBranch3Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch3, constraints);
+        lineUpWithRightBranch4Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch4, constraints);
+        lineUpWithRightBranch5Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch5, constraints);
+        lineUpWithRightBranch6Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch6, constraints);
+        feedLeftCommand = AutoBuilder.pathfindThenFollowPath(feedLeft, constraints);
+        feedRightCommand = AutoBuilder.pathfindThenFollowPath(feedRight, constraints);
     }
 
     /**

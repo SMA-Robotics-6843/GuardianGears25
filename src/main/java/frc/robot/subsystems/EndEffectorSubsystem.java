@@ -19,20 +19,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private SparkMax fMotor = new SparkMax(fMotorID, MotorType.kBrushless);
   private SparkMax sassyMotor = new SparkMax(sassyMotorID, MotorType.kBrushless);
   private final PIDController sassyMotorPID = new PIDController(sassyMotorkP, sassyMotorkI, sassyMotorkD);
-  
+
   /** Creates a new EndEffectorSubsystem. */
   public EndEffectorSubsystem() {
-    
+
+    // Set motors to disable when a command is not running
     setDefaultCommand(
 
         runOnce(
 
-                () -> {
-                    
-                  sassyMotor.disable();
-                  fMotor.disable();
+            () -> {
 
-                })
+              sassyMotor.disable();
+              fMotor.disable();
+
+            })
 
             .andThen(run(() -> {
             }))
@@ -40,12 +41,30 @@ public class EndEffectorSubsystem extends SubsystemBase {
             .withName("Idle"));
   }
 
-  public void spinFMotor(double speed) {
-    fMotor.set(speed);
+  public Command spinFMotor(double speed) {
+    return parallel(
+        run(
+
+            () -> {
+
+              fMotor.set(speed);
+
+            }
+
+        ));
   }
-  
-  public void spinSassyMotor(double speed) {
-    sassyMotor.set(speed);
+
+  public Command spinSassyMotor(double speed) {
+    return parallel(
+        run(
+
+            () -> {
+
+              sassyMotor.set(speed);
+
+            }
+
+        ));
   }
 
   public Command moveEndEffectorToSetpoint(double setpointRotationsPerSecond) {
@@ -56,7 +75,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
               sassyMotor
                   .set(sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpointRotationsPerSecond));
-              System.out.println("moveEndEffectorToSetpoint");
 
             }
 
@@ -69,19 +87,45 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   public void spinFMotorAtSetpoint(double speed) {
-    if(getIsEndEffectorAtSetPoint()) {
+    if (getIsEndEffectorAtSetPoint()) {
       fMotor.set(speed);
     }
   }
 
+  public Command EndEffectorUp() {
+    return spinSassyMotor(sassyMotorUpSpeed);
+  }
+
+  public Command EndEffectorDown() {
+    return spinSassyMotor(sassyMotorDownSpeed);
+  }
+
+  public Command FMotorIn() {
+    return spinFMotor(fMotorInSpeed);
+  }
+
+  public Command FMotorOut() {
+    return spinFMotor(fMotorOutSpeed);
+  }
+
+  public Command EndEffectorToFeeding() {
+    return moveEndEffectorToSetpoint(sassyMotorFeedingSetpointRotationsPerSecond);
+  }
+
+  public Command EndEffectorToL1() {
+    return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
+  }
+
   public Command EndEffectorToL2() {
-    SmartDashboard.putBoolean("isEndEffectorAtSetpoint", getIsEndEffectorAtSetPoint());
     return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
   }
 
   public Command EndEffectorToL3() {
-    SmartDashboard.putBoolean("isEndEffectorAtSetpoint", getIsEndEffectorAtSetPoint());
     return moveEndEffectorToSetpoint(sassyMotorL3SetpointRotationsPerSecond);
+  }
+
+  public Command HoldEndEffector() {
+    return moveEndEffectorToSetpoint(sassyMotorHoldSetpointRotationsPerSecond);
   }
 
   @Override
