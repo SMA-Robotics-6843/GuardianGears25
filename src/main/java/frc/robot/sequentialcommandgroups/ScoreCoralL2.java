@@ -21,10 +21,10 @@ public class ScoreCoralL2 extends SequentialCommandGroup {
     // addCommands(new FooCommand(), new BarCommand());
     addCommands(
       // Run the elevator to L2 and the end effector to L2, then run the end effector's motor out
-        m_elevatorSubsystem.ElevatorToL2()
+        m_elevatorSubsystem.elevatorToL2()
             .alongWith(
-                m_endEffectorSubsystem.EndEffectorToL2())
+                m_endEffectorSubsystem.endEffectorToL2())
             .withTimeout(secondsToReachL2),
-        m_endEffectorSubsystem.FMotorOut().withTimeout(secondsToRunIntakeScoring));
+        m_endEffectorSubsystem.fMotorOut().withTimeout(secondsToRunIntakeScoring));
   }
 }

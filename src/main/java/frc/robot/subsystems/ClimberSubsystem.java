@@ -47,15 +47,15 @@ public class ClimberSubsystem extends SubsystemBase {
 
         }),
 
-        endEffector.HoldEndEffector());
+        endEffector.holdEndEffector());
 
   }
 
-  public Command WindClimber() {
+  public Command windClimber() {
     return moveClimber(climberMotorSpeed);
   }
 
-  public Command UnwindClimber() {
+  public Command unwindClimber() {
     return moveClimber(-climberMotorSpeed);
   }
 

@@ -87,30 +87,30 @@ public class ElevatorSubsystem extends SubsystemBase {
     return isElevatorAtSetpoint;
   }
 
-  public Command ElevatorUp() {
+  public Command elevatorUp() {
     return moveElevator(elevatorMotorsUpSpeed);
   }
 
-  public Command ElevatorDown() {
+  public Command elevatorDown() {
     return moveElevator(elevatorMotorsDownSpeed);
   }
 
-  public Command ElevatorToL1() {
+  public Command elevatorToL1() {
     SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     return moveElevatorToSetpoint(elevatorMotorsL1SetpointRotationsPerSecond);
   }
 
-  public Command ElevatorToL2() {
+  public Command elevatorToL2() {
     SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     return moveElevatorToSetpoint(elevatorMotorsL2SetpointRotationsPerSecond);
   }
 
-  public Command ElevatorToL3() {
+  public Command elevatorToL3() {
     SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     return moveElevatorToSetpoint(elevatorMotorsL3SetpointRotationsPerSecond);
   }
 
-  public Command ElevatorToFeeding() {
+  public Command elevatorToFeeding() {
     SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     return moveElevatorToSetpoint(elevatorMotorsFeedingSetpointRotationsPerSecond);
   }

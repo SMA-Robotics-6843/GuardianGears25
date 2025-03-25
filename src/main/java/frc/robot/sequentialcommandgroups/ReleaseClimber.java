@@ -17,6 +17,6 @@ public class ReleaseClimber extends SequentialCommandGroup {
   public ReleaseClimber(ClimberSubsystem m_ClimberSubsystem) {
     // Add your commands in the addCommands() call, e.g.
     // addCommands(new FooCommand(), new BarCommand());
-    addCommands(m_ClimberSubsystem.UnwindClimber().withTimeout(secondsToReleaseClimber));
+    addCommands(m_ClimberSubsystem.unwindClimber().withTimeout(secondsToReleaseClimber));
   }
 }

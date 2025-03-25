@@ -92,39 +92,39 @@ public class EndEffectorSubsystem extends SubsystemBase {
     }
   }
 
-  public Command EndEffectorUp() {
+  public Command endEffectorUp() {
     return spinSassyMotor(sassyMotorUpSpeed);
   }
 
-  public Command EndEffectorDown() {
+  public Command endEffectorDown() {
     return spinSassyMotor(sassyMotorDownSpeed);
   }
 
-  public Command FMotorIn() {
+  public Command fMotorIn() {
     return spinFMotor(fMotorInSpeed);
   }
 
-  public Command FMotorOut() {
+  public Command fMotorOut() {
     return spinFMotor(fMotorOutSpeed);
   }
 
-  public Command EndEffectorToFeeding() {
+  public Command endEffectorToFeeding() {
     return moveEndEffectorToSetpoint(sassyMotorFeedingSetpointRotationsPerSecond);
   }
 
-  public Command EndEffectorToL1() {
+  public Command endEffectorToL1() {
     return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
   }
 
-  public Command EndEffectorToL2() {
+  public Command endEffectorToL2() {
     return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
   }
 
-  public Command EndEffectorToL3() {
+  public Command endEffectorToL3() {
     return moveEndEffectorToSetpoint(sassyMotorL3SetpointRotationsPerSecond);
   }
 
-  public Command HoldEndEffector() {
+  public Command holdEndEffector() {
     return moveEndEffectorToSetpoint(sassyMotorHoldSetpointRotationsPerSecond);
   }
 

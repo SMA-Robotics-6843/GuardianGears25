@@ -1,5 +1,10 @@
 package frc.robot.constants;
 
+import static edu.wpi.first.units.Units.*;
+
+import com.ctre.phoenix6.swerve.SwerveModule.DriveRequestType;
+import com.ctre.phoenix6.swerve.SwerveRequest;
+
 import edu.wpi.first.apriltag.AprilTagFieldLayout;
 import edu.wpi.first.apriltag.AprilTagFields;
 import edu.wpi.first.math.Matrix;
@@ -11,8 +16,6 @@ import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
 public class Constants {
-    public static final double slewRateLimit = .1;
-
     public static final double secondsToReachFeeding = 1;
     public static final double secondsToReachL1 = 1;
     public static final double secondsToReachL2 = 1;
@@ -20,6 +23,23 @@ public class Constants {
     public static final double secondsToRunIntakeFeeding = 3.5;
     public static final double secondsToRunIntakeScoring = 1;
     public static final double secondsToReleaseClimber = 1;
+
+    public static class DrivetrainConstants {
+        public static double MaxSpeed = TunerConstants.kSpeedAt12Volts.in(MetersPerSecond); // kSpeedAt12Volts desired top
+                                                                                            // speed
+        public static double MaxAngularRate = RotationsPerSecond.of(0.75).in(RadiansPerSecond); // 3/4 of a rotation per second
+                                                                                                          // max angular velocity
+        public static final SwerveRequest.FieldCentric driveFieldCentric = new SwerveRequest.FieldCentric()
+                .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 5% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+        public static final SwerveRequest.RobotCentric driveRobotCentric = new SwerveRequest.RobotCentric()
+                .withDeadband(MaxSpeed * 0.05).withRotationalDeadband(MaxAngularRate * 0.05) // Add a 5% deadband
+                .withDriveRequestType(DriveRequestType.OpenLoopVoltage); // Use open-loop control for drive motors
+
+        public static final SwerveRequest.SwerveDriveBrake brake = new SwerveRequest.SwerveDriveBrake();
+        public static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
+    }
 
     public static class Vision {
         public static final String kCameraName = "Arducam";

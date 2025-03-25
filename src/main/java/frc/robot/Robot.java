@@ -4,6 +4,9 @@
 
 package frc.robot;
 
+
+import com.pathplanner.lib.commands.PathfindingCommand;
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -17,26 +20,27 @@ public class Robot extends TimedRobot {
   private SwerveDriveSubsystem drivetrain;
 
   private Vision vision;
+      
+    public Robot() {
+      m_robotContainer = new RobotContainer();
+      drivetrain = m_robotContainer.getDrivetrain();
+      vision = new Vision();
+      PathfindingCommand.warmupCommand().schedule();
+      //DataLogManager.start();
+    }
+    
+    @Override
+    public void robotPeriodic() {
+      CommandScheduler.getInstance().run(); 
+      var visionEst = vision.getEstimatedGlobalPose();
+      visionEst.ifPresent(
+              est -> {
+                  // Change our trust in the measurement based on the tags we can see
+                  var estStdDevs = vision.getEstimationStdDevs();
   
-  public Robot() {
-    m_robotContainer = new RobotContainer();
-    drivetrain = m_robotContainer.getDrivetrain();
-    vision = new Vision();
-    //DataLogManager.start();
-  }
-  
-  @Override
-  public void robotPeriodic() {
-    CommandScheduler.getInstance().run(); 
-    var visionEst = vision.getEstimatedGlobalPose();
-    visionEst.ifPresent(
-            est -> {
-                // Change our trust in the measurement based on the tags we can see
-                var estStdDevs = vision.getEstimationStdDevs();
-
-                drivetrain.addVisionMeasurement(
-                        est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-            });
+                  drivetrain.addVisionMeasurement(
+                          est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+              });
   }
 
   @Override
