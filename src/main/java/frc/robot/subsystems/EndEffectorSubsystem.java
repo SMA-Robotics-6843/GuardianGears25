@@ -8,6 +8,7 @@ import edu.wpi.first.math.controller.PIDController;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.EndEffectorConstants.*;
@@ -19,26 +20,39 @@ public class EndEffectorSubsystem extends SubsystemBase {
   private SparkMax fMotor = new SparkMax(fMotorID, MotorType.kBrushless);
   private SparkMax sassyMotor = new SparkMax(sassyMotorID, MotorType.kBrushless);
   private final PIDController sassyMotorPID = new PIDController(sassyMotorkP, sassyMotorkI, sassyMotorkD);
+  private CommandXboxController operatorController = new CommandXboxController(1);
 
   /** Creates a new EndEffectorSubsystem. */
   public EndEffectorSubsystem() {
+    if (operatorController.back().getAsBoolean()) {
+      setDefaultCommand(
 
-    // Set motors to disable when a command is not running
-    setDefaultCommand(
+          runOnce(
 
-        runOnce(
+              () -> {
+                fMotor.disable();
+                sassyMotor.disable();
+              })
 
-            () -> {
+      );
+    } else {
 
-              sassyMotor.disable();
-              fMotor.disable();
+      // Set motors to disable when a command is not running
+      setDefaultCommand(
 
-            })
+          runOnce(
 
-            .andThen(run(() -> {
-            }))
+              () -> {
+                fMotor.disable();
+              }).withTimeout(.1)
 
-            .withName("Idle"));
+              .andThen(
+                  holdEndEffector()
+
+              )
+
+      );
+    }
   }
 
   public Command spinFMotor(double speed) {
@@ -67,14 +81,13 @@ public class EndEffectorSubsystem extends SubsystemBase {
         ));
   }
 
-  public Command moveEndEffectorToSetpoint(double setpointRotationsPerSecond) {
+  public Command moveEndEffectorToSetpoint(double setpoint) {
     return parallel(
         run(
 
             () -> {
-
               sassyMotor
-                  .set(sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpointRotationsPerSecond));
+                  .set((sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpoint)) / 2);
 
             }
 
@@ -109,23 +122,35 @@ public class EndEffectorSubsystem extends SubsystemBase {
   }
 
   public Command endEffectorToFeeding() {
-    return moveEndEffectorToSetpoint(sassyMotorFeedingSetpointRotationsPerSecond);
+    return moveEndEffectorToSetpoint(sassyMotorFeedingSetpoint);
   }
 
   public Command endEffectorToL1() {
-    return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
+    return moveEndEffectorToSetpoint(sassyMotorL2Setpoint);
   }
 
   public Command endEffectorToL2() {
-    return moveEndEffectorToSetpoint(sassyMotorL2SetpointRotationsPerSecond);
+    return moveEndEffectorToSetpoint(sassyMotorL2Setpoint);
   }
 
   public Command endEffectorToL3() {
-    return moveEndEffectorToSetpoint(sassyMotorL3SetpointRotationsPerSecond);
+    return moveEndEffectorToSetpoint(sassyMotorL3Setpoint);
+  }
+
+  public Command endEffectorToL4() {
+    return moveEndEffectorToSetpoint(sassyMotorL4Setpoint);
   }
 
   public Command holdEndEffector() {
-    return moveEndEffectorToSetpoint(sassyMotorHoldSetpointRotationsPerSecond);
+    return moveEndEffectorToSetpoint(sassyMotorHoldSetpoint);
+  }
+
+  public Command endEffectorToRemoveAlgae() {
+    return moveEndEffectorToSetpoint(sassyMotorRemoveAlgaeSetpoint);
+  }
+
+  public void resetSassyMotorEncoder() {
+    sassyMotor.getEncoder().setPosition(0);
   }
 
   @Override

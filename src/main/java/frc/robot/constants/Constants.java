@@ -17,11 +17,15 @@ import edu.wpi.first.math.numbers.N3;
 
 public class Constants {
     public static final double secondsToReachFeeding = 1;
-    public static final double secondsToReachL1 = 1;
-    public static final double secondsToReachL2 = 1;
-    public static final double secondsToReachL3 = 1;
+    public static final double secondsToReachL1 = .7;
+    public static final double secondsToReachL2 = .7;
+    public static final double secondsToReachL3 = .7;
+    public static final double secondsToReachL4 = 1;
+    public static final double secondsToReachLowAlgae = .7;
+    public static final double secondsToReachHighAlgae = .7;
     public static final double secondsToRunIntakeFeeding = 3.5;
     public static final double secondsToRunIntakeScoring = 1;
+    public static final double secondsToRunIntakeAlgae = 10;
     public static final double secondsToReleaseClimber = 1;
 
     public static class DrivetrainConstants {
@@ -41,12 +45,12 @@ public class Constants {
         public static final SwerveRequest.PointWheelsAt point = new SwerveRequest.PointWheelsAt();
     }
 
-    public static class Vision {
+    public static class VisionConstants {
         public static final String kCameraName = "Arducam";
         // Offsets: 0.05m forward, 0.25m to the left, 0.86m up
         public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.05, -0.25, 0.86),
-                // Camera is mounted facing forward
-                new Rotation3d(0, 0, 0));
+                // Camera is mounted facing forward 
+                new Rotation3d(90, 0, 0));
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -65,13 +69,16 @@ public class Constants {
         public static final int elevatorMotorRightID = 3;
 
         // Movement
-        public static final double elevatorMotorsUpSpeed = .25;
-        public static final double elevatorMotorsDownSpeed = -.25;
+        public static final double elevatorMotorsUpSpeed = .45;
+        public static final double elevatorMotorsDownSpeed = -.45;
 
-        public static final double elevatorMotorsFeedingSetpointRotationsPerSecond = 6;
-        public static final double elevatorMotorsL1SetpointRotationsPerSecond = 42.5;
-        public static final double elevatorMotorsL2SetpointRotationsPerSecond = 37.5;
-        public static final double elevatorMotorsL3SetpointRotationsPerSecond = 62;
+        public static final double elevatorMotorsFeedingSetpoint = 0;
+        public static final double elevatorMotorsL1Setpoint = 1.5;
+        public static final double elevatorMotorsL2Setpoint = 4;
+        public static final double elevatorMotorsL3Setpoint = 26; //27.6
+        public static final double elevatorMotorsL4Setpoint = 79;
+        public static final double elevatorMotorsLowAlgaeSetpoint = 3;
+        public static final double elevatorMotorsHighAlgaeSetpoint = 20;
 
         // PID tunings
         public static final double elevatorMotorLeftkP = 0.1;
@@ -89,17 +96,19 @@ public class Constants {
         public static final int sassyMotorID = 5;
 
         // Movement
-        public static final double sassyMotorUpSpeed = -.25;
-        public static final double sassyMotorDownSpeed = .25;
+        public static final double sassyMotorUpSpeed = .1;
+        public static final double sassyMotorDownSpeed = -.1;
         public static final double fMotorInSpeed = .25;
         public static final double fMotorOutSpeed = -1;
         public static final double fMotorOutSpeedL1 = -.75;
 
-        public static final double sassyMotorFeedingSetpointRotationsPerSecond = 4;
-        public static final double sassyMotorL1SetpointRotationsPerSecond = 17;
-        public static final double sassyMotorL2SetpointRotationsPerSecond = 13;
-        public static final double sassyMotorL3SetpointRotationsPerSecond = 13;
-        public static final double sassyMotorHoldSetpointRotationsPerSecond = 6;
+        public static final double sassyMotorHoldSetpoint = -3.5;
+        public static final double sassyMotorFeedingSetpoint = 0;
+        public static final double sassyMotorL1Setpoint = -1;
+        public static final double sassyMotorL2Setpoint = -3.5;
+        public static final double sassyMotorL3Setpoint = -3.5;
+        public static final double sassyMotorL4Setpoint = -13;
+        public static final double sassyMotorRemoveAlgaeSetpoint = -6;
 
         // PID tunings
         public static final double sassyMotorkP = 0.1;

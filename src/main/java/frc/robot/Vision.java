@@ -29,7 +29,7 @@ import edu.wpi.first.math.VecBuilder;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
 
-import static frc.robot.constants.Constants.Vision.*;
+import static frc.robot.constants.Constants.VisionConstants.*;
 
 import java.util.List;
 import java.util.Optional;

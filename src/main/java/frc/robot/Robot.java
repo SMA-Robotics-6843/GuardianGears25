@@ -4,53 +4,67 @@
 
 package frc.robot;
 
-
-import com.pathplanner.lib.commands.PathfindingCommand;
-
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.Timer;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+
+import com.pathplanner.lib.commands.PathfindingCommand;
+
+import edu.wpi.first.cameraserver.CameraServer;
 //import edu.wpi.first.wpilibj.DataLogManager;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-
   private final RobotContainer m_robotContainer;
   private SwerveDriveSubsystem drivetrain;
-
   private Vision vision;
-      
-    public Robot() {
-      m_robotContainer = new RobotContainer();
-      drivetrain = m_robotContainer.getDrivetrain();
-      vision = new Vision();
-      PathfindingCommand.warmupCommand().schedule();
-      //DataLogManager.start();
-    }
-    
-    @Override
-    public void robotPeriodic() {
-      CommandScheduler.getInstance().run(); 
-      var visionEst = vision.getEstimatedGlobalPose();
-      visionEst.ifPresent(
-              est -> {
-                  // Change our trust in the measurement based on the tags we can see
-                  var estStdDevs = vision.getEstimationStdDevs();
-  
-                  drivetrain.addVisionMeasurement(
-                          est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
-              });
+  private Timer m_gcTimer = new Timer();
+
+  public Robot() {
+    m_robotContainer = new RobotContainer();
+    drivetrain = m_robotContainer.getDrivetrain();
+    vision = new Vision();
+    m_gcTimer.start();
+    CameraServer.startAutomaticCapture("Climber Cam", 0);
+    CameraServer.startAutomaticCapture("Intake Cam", 1);
+    PathfindingCommand.warmupCommand().schedule();
+    // DataLogManager.start();
   }
 
   @Override
-  public void disabledInit() {}
+  public void robotPeriodic() {
+    CommandScheduler.getInstance().run();
+    // Run garbage collector every 5 seconds
+    if(m_gcTimer.advanceIfElapsed(5)) {
+      System.gc();
+    }
+    var visionEst = vision.getEstimatedGlobalPose();
+    SmartDashboard.putBoolean("visionEst.isPresent", visionEst.isPresent());
+    visionEst.ifPresent(
+        est -> {
+          System.out.println("visionEst present");
+          // Change our trust in the measurement based on the tags we can see
+          var estStdDevs = vision.getEstimationStdDevs();
+
+          drivetrain.addVisionMeasurement(
+              est.estimatedPose.toPose2d(), est.timestampSeconds, estStdDevs);
+        });
+  }
 
   @Override
-  public void disabledPeriodic() {}
+  public void disabledInit() {
+  }
 
   @Override
-  public void disabledExit() {}
+  public void disabledPeriodic() {
+  }
+
+  @Override
+  public void disabledExit() {
+  }
 
   @Override
   public void autonomousInit() {
@@ -62,10 +76,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void autonomousPeriodic() {}
+  public void autonomousPeriodic() {
+  }
 
   @Override
-  public void autonomousExit() {}
+  public void autonomousExit() {
+  }
 
   @Override
   public void teleopInit() {
@@ -75,10 +91,12 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void teleopPeriodic() {}
+  public void teleopPeriodic() {
+  }
 
   @Override
-  public void teleopExit() {}
+  public void teleopExit() {
+  }
 
   @Override
   public void testInit() {
@@ -86,11 +104,14 @@ public class Robot extends TimedRobot {
   }
 
   @Override
-  public void testPeriodic() {}
+  public void testPeriodic() {
+  }
 
   @Override
-  public void testExit() {}
+  public void testExit() {
+  }
 
   @Override
-  public void simulationPeriodic() {}
+  public void simulationPeriodic() {
+  }
 }

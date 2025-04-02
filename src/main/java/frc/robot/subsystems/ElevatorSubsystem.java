@@ -25,8 +25,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI,
       elevatorMotorRightkD);
 
-  public boolean isElevatorAtSetpoint;
-
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem() {
 
@@ -37,7 +35,6 @@ public class ElevatorSubsystem extends SubsystemBase {
             () -> {
 
               elevatorMotorLeft.disable();
-
               elevatorMotorRight.disable();
 
             })
@@ -46,7 +43,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             }))
 
             .withName("Idle"));
-            
+
   }
 
   public Command moveElevator(double speed) {
@@ -64,27 +61,31 @@ public class ElevatorSubsystem extends SubsystemBase {
         ));
   }
 
-  public Command moveElevatorToSetpoint(double setpointRotationsPerSecond) {
+  public Command moveElevatorToSetpoint(double setpoint) {
     return parallel(
 
         run(() -> {
 
           elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpointRotationsPerSecond));
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpoint));
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -setpointRotationsPerSecond));
+              -setpoint));
 
         }));
-        
+
+  }
+
+  public void resetElevatorEncoders() {
+    elevatorMotorLeft.getEncoder().setPosition(0);
+    elevatorMotorRight.getEncoder().setPosition(0);
   }
 
   public boolean getIsElevatorAtSetPoint() {
     if (elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint()) {
-      isElevatorAtSetpoint = true;
+      return true;
     } else {
-      isElevatorAtSetpoint = false;
+      return false;
     }
-    return isElevatorAtSetpoint;
   }
 
   public Command elevatorUp() {
@@ -96,28 +97,37 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command elevatorToL1() {
-    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
-    return moveElevatorToSetpoint(elevatorMotorsL1SetpointRotationsPerSecond);
+    return moveElevatorToSetpoint(elevatorMotorsL1Setpoint);
   }
 
   public Command elevatorToL2() {
-    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
-    return moveElevatorToSetpoint(elevatorMotorsL2SetpointRotationsPerSecond);
+    return moveElevatorToSetpoint(elevatorMotorsL2Setpoint);
   }
 
   public Command elevatorToL3() {
-    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
-    return moveElevatorToSetpoint(elevatorMotorsL3SetpointRotationsPerSecond);
+    return moveElevatorToSetpoint(elevatorMotorsL3Setpoint);
+  }
+
+  public Command elevatorToL4() {
+    return moveElevatorToSetpoint(elevatorMotorsL4Setpoint);
   }
 
   public Command elevatorToFeeding() {
-    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
-    return moveElevatorToSetpoint(elevatorMotorsFeedingSetpointRotationsPerSecond);
+    return moveElevatorToSetpoint(elevatorMotorsFeedingSetpoint);
+  }
+
+  public Command elevatorToLowAlgae() {
+    return moveElevatorToSetpoint(elevatorMotorsLowAlgaeSetpoint);
+  }
+
+  public Command elevatorToHighAlgae() {
+    return moveElevatorToSetpoint(elevatorMotorsHighAlgaeSetpoint);
   }
 
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
     SmartDashboard.putNumber("elevatorMotorLeft encoder", elevatorMotorLeft.getEncoder().getPosition());
     SmartDashboard.putNumber("elevatorMotorRight encoder", elevatorMotorRight.getEncoder().getPosition());
   }

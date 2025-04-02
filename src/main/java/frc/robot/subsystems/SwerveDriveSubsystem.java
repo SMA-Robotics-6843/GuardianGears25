@@ -1,7 +1,6 @@
 package frc.robot.subsystems;
 
 import static edu.wpi.first.units.Units.*;
-import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.DrivetrainConstants.*;
 
 import java.io.IOException;
@@ -73,6 +72,7 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
     public Command lineUpWithLeftBranch4Command;
     public Command lineUpWithLeftBranch5Command;
     public Command lineUpWithLeftBranch6Command;
+    public Command lineUpWithLeftBranch6CommandAuto;
     public Command lineUpWithRightBranch1Command;
     public Command lineUpWithRightBranch2Command;
     public Command lineUpWithRightBranch3Command;
@@ -208,6 +208,7 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
         lineUpWithLeftBranch4Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch4, constraints);
         lineUpWithLeftBranch5Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch5, constraints);
         lineUpWithLeftBranch6Command = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch6, constraints);
+        lineUpWithLeftBranch6CommandAuto = AutoBuilder.pathfindThenFollowPath(lineUpWithLeftBranch6, constraints).withTimeout(3.5);
         lineUpWithRightBranch1Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch1, constraints);
         lineUpWithRightBranch2Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch2, constraints);
         lineUpWithRightBranch3Command = AutoBuilder.pathfindThenFollowPath(lineUpWithRightBranch3, constraints);
@@ -428,11 +429,16 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
+                System.out.println("addVisionMeasurement");
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);
     }
 
     public Command driveBackwards(double seconds) {
         return applyRequest(() -> driveRobotCentric.withVelocityX(-1.5)).withTimeout(seconds);
+    }
+
+    public Command driveForwards(double seconds) {
+        return applyRequest(() -> driveRobotCentric.withVelocityX(1.5)).withTimeout(seconds);
     }
 }
