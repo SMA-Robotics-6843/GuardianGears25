@@ -37,6 +37,7 @@ Pathplanner documentation can be found at https://pathplanner.dev/home.html
 This was our first year using pathplanner, so there is still much to improved on. 
 - The robot config values need to be set; Sysid needs to be used to calculate the Robot MOI. 
 - The autonomous paths need to be tuned on a practice field through trial and error. 
+- Pathplanner paths take up a lot of memory on the RoboRIO. Be careful when making several of them. 
 
 ### Robot Pose, Pathfinding, and Vision
 
@@ -60,6 +61,14 @@ Documentation:
 - [PID Control in Command-based](https://docs.wpilib.org/en/stable/docs/software/commandbased/pid-subsystems-commands.html#pid-control-in-command-based)
 - [Explanation video](https://www.youtube.com/watch?v=UOuRx9Ujsog&t=252s)
 
+### Presets
+
+- Our presets are command groups that chain together commands to automatically score or intake pieces. These commands are set in-line in the subsystems and use PID to move parts of the robot to set positions. Command groups allow you set time between the commands and if you want to run them at the same time or sequentially. 
+
+Documentation:
+
+- [Command Groups](https://docs.wpilib.org/en/2020/docs/software/commandbased/command-groups.html)
+- [Command Compositions](https://docs.wpilib.org/en/stable/docs/software/commandbased/command-compositions.html)
 
 ## Controls
 
@@ -74,4 +83,12 @@ Controls are set in RobotContainer.java
     - Be careful when using the bumpers, you should release everything before changing which bumpers you are pressing
 
 Pathfinding controls:
+
 ![Drawing 04-02-2025 20 21 excalidraw](https://github.com/user-attachments/assets/e61c9e23-a830-4842-b46f-cbc1d6986c3c)
+
+## What to do better next time
+
+- Use sysid on a practice field to find values in TunerConstants and find the robot MOI for pathplanner
+- Tune autos on a practice field
+- Tune photonvision
+- Properly calculate PID values
