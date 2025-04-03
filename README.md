@@ -74,3 +74,4 @@ Controls are set in RobotContainer.java
     - Be careful when using the bumpers, you should release everything before changing which bumpers you are pressing
 
 Pathfinding controls:
+![Drawing 04-02-2025 20 21 excalidraw](https://github.com/user-attachments/assets/e61c9e23-a830-4842-b46f-cbc1d6986c3c)
