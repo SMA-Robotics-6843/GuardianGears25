@@ -12,15 +12,18 @@ import static frc.robot.constants.Constants.ClimberConstants.*;
 
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import frc.robot.constants.Constants;
 
 public class ClimberSubsystem extends SubsystemBase {
   private static SparkMax climberMotor = new SparkMax(climberMotorID, MotorType.kBrushless);
   private EndEffectorSubsystem endEffector;
+  private LEDSubsystem ledSubsystem;
 
   /** Creates a new ClimberSubsystem. */
-  public ClimberSubsystem(EndEffectorSubsystem m_endEffector) {
+  public ClimberSubsystem(EndEffectorSubsystem m_endEffector, LEDSubsystem m_ledSubsystem) {
 
     endEffector = m_endEffector;
+    ledSubsystem = m_ledSubsystem;
 
     setDefaultCommand(
 
@@ -38,25 +41,30 @@ public class ClimberSubsystem extends SubsystemBase {
             .withName("Idle"));
   }
 
-  private Command moveClimber(double speed) {
+  public Command windClimber() {
     return parallel(
 
         run(() -> {
 
-          climberMotor.set(speed);
+          climberMotor.set(climberMotorSpeed);
 
         }),
 
-        endEffector.holdEndEffector());
-
-  }
-
-  public Command windClimber() {
-    return moveClimber(climberMotorSpeed);
+        endEffector.holdEndEffector(),
+        ledSubsystem.setLED(Constants.LEDConstants.scrollingRainbow));
   }
 
   public Command unwindClimber() {
-    return moveClimber(-climberMotorSpeed);
+    return parallel(
+
+        run(() -> {
+
+          climberMotor.set(-climberMotorSpeed);
+
+        }),
+
+        endEffector.holdEndEffector(), 
+        ledSubsystem.setLED(Constants.LEDConstants.scrollingRainbowSlow));
   }
 
   @Override

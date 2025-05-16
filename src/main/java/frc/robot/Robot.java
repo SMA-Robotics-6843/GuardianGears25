@@ -4,11 +4,15 @@
 
 package frc.robot;
 
+
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.constants.Constants;
+import frc.robot.subsystems.LEDSubsystem;
 import frc.robot.subsystems.SwerveDriveSubsystem;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
@@ -20,13 +24,12 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
   private SwerveDriveSubsystem drivetrain;
-  private Vision vision;
+  private Vision vision = new Vision();
   private Timer m_gcTimer = new Timer();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
     drivetrain = m_robotContainer.getDrivetrain();
-    vision = new Vision();
     m_gcTimer.start();
     CameraServer.startAutomaticCapture("Climber Cam", 0);
     CameraServer.startAutomaticCapture("Intake Cam", 1);
@@ -38,7 +41,7 @@ public class Robot extends TimedRobot {
   public void robotPeriodic() {
     CommandScheduler.getInstance().run();
     // Run garbage collector every 5 seconds
-    if(m_gcTimer.advanceIfElapsed(5)) {
+    if (m_gcTimer.advanceIfElapsed(5)) {
       System.gc();
     }
     var visionEst = vision.getEstimatedGlobalPose();

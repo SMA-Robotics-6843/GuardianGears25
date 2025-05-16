@@ -29,6 +29,7 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
+import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
         private final Telemetry logger = new Telemetry(MaxSpeed);
@@ -37,10 +38,11 @@ public class RobotContainer {
         private final CommandXboxController operatorController = new CommandXboxController(1); // Operator controller
 
         // Subsystems
+        public final LEDSubsystem ledSubsystem = new LEDSubsystem();
         public final SwerveDriveSubsystem drivetrain = TunerConstants.createDrivetrain();
-        public final ElevatorSubsystem elevator = new ElevatorSubsystem();
+        public final ElevatorSubsystem elevator = new ElevatorSubsystem(ledSubsystem);
         public final EndEffectorSubsystem endEffector = new EndEffectorSubsystem();
-        public final ClimberSubsystem climber = new ClimberSubsystem(endEffector);
+        public final ClimberSubsystem climber = new ClimberSubsystem(endEffector, ledSubsystem);
 
         // Commands
         public final Command elevatorUp = elevator.elevatorUp();

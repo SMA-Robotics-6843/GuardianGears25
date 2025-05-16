@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.ElevatorConstants.*;
+import static frc.robot.constants.Constants.LEDConstants.*;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -25,8 +26,11 @@ public class ElevatorSubsystem extends SubsystemBase {
   private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI,
       elevatorMotorRightkD);
 
+  private LEDSubsystem ledSubsystem;
+
   /** Creates a new ElevatorSubsystem. */
-  public ElevatorSubsystem() {
+  public ElevatorSubsystem(LEDSubsystem m_ledSubsystem) {
+    ledSubsystem = m_ledSubsystem;
 
     setDefaultCommand(
 
@@ -46,35 +50,6 @@ public class ElevatorSubsystem extends SubsystemBase {
 
   }
 
-  public Command moveElevator(double speed) {
-    return parallel(
-
-        run(
-
-            () -> {
-
-              elevatorMotorLeft.set(speed);
-              elevatorMotorRight.set(-speed);
-
-            }
-
-        ));
-  }
-
-  public Command moveElevatorToSetpoint(double setpoint) {
-    return parallel(
-
-        run(() -> {
-
-          elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), setpoint));
-          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -setpoint));
-
-        }));
-
-  }
-
   public void resetElevatorEncoders() {
     elevatorMotorLeft.getEncoder().setPosition(0);
     elevatorMotorRight.getEncoder().setPosition(0);
@@ -89,39 +64,128 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command elevatorUp() {
-    return moveElevator(elevatorMotorsUpSpeed);
+    return parallel(
+
+        run(
+
+            () -> {
+
+              elevatorMotorLeft.set(elevatorMotorsUpSpeed);
+              elevatorMotorRight.set(-elevatorMotorsUpSpeed);
+
+            }
+
+        ));
   }
 
   public Command elevatorDown() {
-    return moveElevator(elevatorMotorsDownSpeed);
+    return parallel(
+
+        run(
+
+            () -> {
+
+              elevatorMotorLeft.set(elevatorMotorsDownSpeed);
+              elevatorMotorRight.set(-elevatorMotorsDownSpeed);
+
+            }
+
+        ));
   }
 
   public Command elevatorToL1() {
-    return moveElevatorToSetpoint(elevatorMotorsL1Setpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL1Setpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsL1Setpoint));
+          ledSubsystem.setLED(red);
+
+        }));
   }
 
   public Command elevatorToL2() {
-    return moveElevatorToSetpoint(elevatorMotorsL2Setpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL2Setpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsL2Setpoint));
+          ledSubsystem.setLED(orange);
+
+        }));
   }
 
   public Command elevatorToL3() {
-    return moveElevatorToSetpoint(elevatorMotorsL3Setpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL3Setpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsL3Setpoint));
+          ledSubsystem.setLED(yellow);
+
+        }));
   }
 
   public Command elevatorToL4() {
-    return moveElevatorToSetpoint(elevatorMotorsL4Setpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL4Setpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsL4Setpoint));
+          ledSubsystem.setLED(green);
+
+        }));
   }
 
   public Command elevatorToFeeding() {
-    return moveElevatorToSetpoint(elevatorMotorsFeedingSetpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsFeedingSetpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsFeedingSetpoint));
+
+        }));
   }
 
   public Command elevatorToLowAlgae() {
-    return moveElevatorToSetpoint(elevatorMotorsLowAlgaeSetpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsLowAlgaeSetpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsLowAlgaeSetpoint));
+
+        }));
   }
 
   public Command elevatorToHighAlgae() {
-    return moveElevatorToSetpoint(elevatorMotorsHighAlgaeSetpoint);
+    return parallel(
+
+        run(() -> {
+
+          elevatorMotorLeft.set(
+              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsHighAlgaeSetpoint));
+          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
+              -elevatorMotorsHighAlgaeSetpoint));
+
+        }));
   }
 
   @Override

@@ -80,6 +80,8 @@ Controls are set in RobotContainer.java
 ### Driver Controller
 
 - Left Joystick controls forward, backward, side to side, and right stick controls rotation
+  - Hold down left stick to enter brake mode, placing the wheels in an X formation
+  - Press down right stick to reset field-centric heading
   - Hold left bumper to switch from field centric to robot centric
   - Hold right bumper to drive slowly
   - Both bumpers can be used at the same time
@@ -106,6 +108,7 @@ Pathfinding controls:
 - **right bumper**: Run automation to intake from feeding station
 - **left trigger**: Run automation to remove algae from the lower level
 - **right trigger**: Run automation to remove algae from the higher level
+- **press right stick**: Reset elevator and end effector encoders to 0
 
 ## What to do better next time
 
