@@ -6,10 +6,14 @@ package frc.robot;
 
 import com.pathplanner.lib.auto.AutoBuilder;
 import com.pathplanner.lib.auto.NamedCommands;
+import com.pathplanner.lib.path.PathConstraints;
 
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.Commands;
+
 import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
@@ -25,6 +29,8 @@ import frc.robot.commandgroups.RemoveLowAlgae;
 import frc.robot.constants.TunerConstants;
 import static frc.robot.constants.Constants.DrivetrainConstants.*;
 
+import java.util.Set;
+
 import frc.robot.subsystems.SwerveDriveSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
@@ -32,8 +38,9 @@ import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
+        private final Vision vision = new Vision();
         private final Telemetry logger = new Telemetry(MaxSpeed);
-
+        
         private final CommandXboxController driverController = new CommandXboxController(0); // Driver controller
         private final CommandXboxController operatorController = new CommandXboxController(1); // Operator controller
 
@@ -66,24 +73,10 @@ public class RobotContainer {
         public final RemoveHighAlgae removeHighAlgae = new RemoveHighAlgae(elevator, endEffector);
         public final ReleaseClimber releaseClimber = new ReleaseClimber(climber);
 
-        // Paths for pathfinding
-        public final Command lineUpWithLeftBranch1 = drivetrain.lineUpWithLeftBranch1Command;
-        public final Command lineUpWithLeftBranch2 = drivetrain.lineUpWithLeftBranch2Command;
-        public final Command lineUpWithLeftBranch3 = drivetrain.lineUpWithLeftBranch3Command;
-        public final Command lineUpWithLeftBranch4 = drivetrain.lineUpWithLeftBranch4Command;
-        public final Command lineUpWithLeftBranch5 = drivetrain.lineUpWithLeftBranch5Command;
-        public final Command lineUpWithLeftBranch6 = drivetrain.lineUpWithLeftBranch6Command;
-        public final Command lineUpWithLeftBranch6Auto = drivetrain.lineUpWithLeftBranch6CommandAuto;
-        public final Command lineUpWithRightBranch1 = drivetrain.lineUpWithRightBranch1Command;
-        public final Command lineUpWithRightBranch2 = drivetrain.lineUpWithRightBranch2Command;
-        public final Command lineUpWithRightBranch3 = drivetrain.lineUpWithRightBranch3Command;
-        public final Command lineUpWithRightBranch4 = drivetrain.lineUpWithRightBranch4Command;
-        public final Command lineUpWithRightBranch5 = drivetrain.lineUpWithRightBranch5Command;
-        public final Command lineUpWithRightBranch6 = drivetrain.lineUpWithRightBranch6Command;
-        public final Command feedLeft = drivetrain.feedLeftCommand;
-        public final Command feedRight = drivetrain.feedRightCommand;
-
         private final SendableChooser<Command> autoChooser;
+
+        private PathConstraints constraints = new PathConstraints(
+                        3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
         public RobotContainer() {
                 NamedCommands.registerCommand("CoralFromFeeding", coralFromFeeding);
@@ -92,7 +85,6 @@ public class RobotContainer {
                 NamedCommands.registerCommand("ScoreCoralL4", scoreCoralL4);
                 NamedCommands.registerCommand("ReleaseClimber", releaseClimber);
                 NamedCommands.registerCommand("DriveBackwards", driveBackwards);
-                NamedCommands.registerCommand("LineupWithLeftBranch6Auto", lineUpWithLeftBranch6Auto);
 
                 configureBindings();
 
@@ -158,10 +150,18 @@ public class RobotContainer {
                                 .and(driverController.leftTrigger().negate())
                                 .and(driverController.rightTrigger().negate())
                                 .whileTrue(unwindClimber);
-                // driverController.b()
-                // .and(driverController.leftTrigger().negate())
-                // .and(driverController.rightTrigger().negate())
-                // .onTrue(driveBackwards);
+                                
+                driverController.leftTrigger().and(driverController.rightTrigger().negate())
+                                .whileTrue(Commands.defer(
+                                                () -> AutoBuilder.pathfindToPose(vision.decidePoseAlignmentLeft(),
+                                                                constraints, 0),
+                                                Set.of(drivetrain)));
+
+                driverController.rightTrigger().and(driverController.leftTrigger().negate())
+                                .whileTrue(Commands.defer(
+                                                () -> AutoBuilder.pathfindToPose(vision.decidePoseAlignmentLeft(),
+                                                                constraints, 0),
+                                                Set.of(drivetrain)));
 
                 // TODO: Run sysid
                 // Run SysId routines when holding back/start and X/Y.
@@ -174,53 +174,6 @@ public class RobotContainer {
                                 .whileTrue(drivetrain.sysIdQuasistatic(Direction.kForward));
                 driverController.start().and(driverController.x())
                                 .whileTrue(drivetrain.sysIdQuasistatic(Direction.kReverse));
-
-                // Pathfinding
-                // Left side, left trigger
-                driverController.povDown()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch1);
-                driverController.povLeft()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch2);
-                driverController.povUp()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch3);
-                driverController.a()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch4);
-                driverController.x()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch5);
-                driverController.y()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch6);
-                driverController.povRight()
-                                .and(driverController.leftTrigger()).and(driverController.rightTrigger().negate())
-                                .whileTrue(feedLeft);
-
-                // Right side, right trigger
-                driverController.povDown()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch1);
-                driverController.povRight()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch2);
-                driverController.povUp()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch3);
-                driverController.a()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch4);
-                driverController.b()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch5);
-                driverController.y()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(lineUpWithLeftBranch6);
-                driverController.x()
-                                .and(driverController.rightTrigger()).and(driverController.leftTrigger().negate())
-                                .whileTrue(feedRight);
 
                 // Operator controls
                 // Normal
@@ -255,5 +208,5 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
                 // return driveForwards;
-        }
+    }
 }
