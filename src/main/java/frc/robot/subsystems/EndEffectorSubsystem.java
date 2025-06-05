@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.EndEffectorConstants.*;
+import static frc.robot.constants.Constants.AutomationConstants.*;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;

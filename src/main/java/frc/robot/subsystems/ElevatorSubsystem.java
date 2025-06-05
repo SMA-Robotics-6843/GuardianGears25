@@ -10,6 +10,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.ElevatorConstants.*;
+import static frc.robot.constants.Constants.AutomationConstants.*;
 import static frc.robot.constants.Constants.LEDConstants.*;
 
 import com.revrobotics.spark.SparkMax;
@@ -102,9 +103,13 @@ public class ElevatorSubsystem extends SubsystemBase {
               elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL1Setpoint));
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
               -elevatorMotorsL1Setpoint));
-          ledSubsystem.setLED(red);
 
-        }));
+
+        }),
+
+          ledSubsystem.setLED(red)
+        
+        );
   }
 
   public Command elevatorToL2() {
@@ -116,9 +121,13 @@ public class ElevatorSubsystem extends SubsystemBase {
               elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL2Setpoint));
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
               -elevatorMotorsL2Setpoint));
-          ledSubsystem.setLED(orange);
 
-        }));
+
+        }),
+
+          ledSubsystem.setLED(orange)
+        
+        );
   }
 
   public Command elevatorToL3() {
@@ -130,9 +139,12 @@ public class ElevatorSubsystem extends SubsystemBase {
               elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL3Setpoint));
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
               -elevatorMotorsL3Setpoint));
-          ledSubsystem.setLED(yellow);
 
-        }));
+        }),
+
+        ledSubsystem.setLED(yellow)
+      
+      );
   }
 
   public Command elevatorToL4() {
@@ -144,9 +156,12 @@ public class ElevatorSubsystem extends SubsystemBase {
               elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL4Setpoint));
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
               -elevatorMotorsL4Setpoint));
-          ledSubsystem.setLED(green);
 
-        }));
+        }),
+
+        ledSubsystem.setLED(green)
+      
+      );
   }
 
   public Command elevatorToFeeding() {

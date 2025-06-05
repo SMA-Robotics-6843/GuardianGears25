@@ -54,10 +54,10 @@ public class Constants {
 
     public static class VisionConstants {
         public static final String kCameraName = "Arducam";
-        // Offsets: 0.05m forward, 0.25m to the left, 0.86m up
-        public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0.05, -0.25, 0.86),
-                // Camera is mounted facing forward
-                new Rotation3d(90, 0, 0));
+        // Offsets: 0m forward, 0.3m to the left, 0.41m up
+        public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0, 0.3, 0.41),
+                // Camera is mounted facing -30 degrees or -.52 radians to the right
+                new Rotation3d(0, 0, -.52));
 
         // The layout of the AprilTags on the field
         public static final AprilTagFieldLayout kTagLayout = AprilTagFieldLayout
@@ -70,6 +70,24 @@ public class Constants {
         public static final Matrix<N3, N1> kMultiTagStdDevs = VecBuilder.fill(0.5, 0.5, 1);
     }
 
+    public static class AutomationConstants {
+        public static final double elevatorMotorsFeedingSetpoint = 0;
+        public static final double elevatorMotorsL1Setpoint = 1.5;
+        public static final double elevatorMotorsL2Setpoint = 3.5;
+        public static final double elevatorMotorsL3Setpoint = 24; // 27.6
+        public static final double elevatorMotorsL4Setpoint = 77.5;
+        public static final double elevatorMotorsLowAlgaeSetpoint = 3;
+        public static final double elevatorMotorsHighAlgaeSetpoint = 20;
+
+        public static final double sassyMotorHoldSetpoint = -3;
+        public static final double sassyMotorFeedingSetpoint = 0;
+        public static final double sassyMotorL1Setpoint = -1;
+        public static final double sassyMotorL2Setpoint = -3;
+        public static final double sassyMotorL3Setpoint = -3;
+        public static final double sassyMotorL4Setpoint = -8;
+        public static final double sassyMotorRemoveAlgaeSetpoint = -6;
+    }
+
     public static class ElevatorConstants {
         // CAN IDs
         public static final int elevatorMotorLeftID = 2;
@@ -78,14 +96,6 @@ public class Constants {
         // Movement
         public static final double elevatorMotorsUpSpeed = .45;
         public static final double elevatorMotorsDownSpeed = -.45;
-
-        public static final double elevatorMotorsFeedingSetpoint = 0;
-        public static final double elevatorMotorsL1Setpoint = 1.5;
-        public static final double elevatorMotorsL2Setpoint = 3;
-        public static final double elevatorMotorsL3Setpoint = 24; // 27.6
-        public static final double elevatorMotorsL4Setpoint = 77.5;
-        public static final double elevatorMotorsLowAlgaeSetpoint = 3;
-        public static final double elevatorMotorsHighAlgaeSetpoint = 20;
 
         // PID tunings
         public static final double elevatorMotorLeftkP = 0.1;
@@ -108,14 +118,6 @@ public class Constants {
         public static final double fMotorInSpeed = .25;
         public static final double fMotorOutSpeed = -1;
         public static final double fMotorOutSpeedL1 = -.75;
-
-        public static final double sassyMotorHoldSetpoint = 0;
-        public static final double sassyMotorFeedingSetpoint = 2;
-        public static final double sassyMotorL1Setpoint = -1;
-        public static final double sassyMotorL2Setpoint = -3.5;
-        public static final double sassyMotorL3Setpoint = -3.5;
-        public static final double sassyMotorL4Setpoint = -8;
-        public static final double sassyMotorRemoveAlgaeSetpoint = -6;
 
         // PID tunings
         public static final double sassyMotorkP = 0.1;

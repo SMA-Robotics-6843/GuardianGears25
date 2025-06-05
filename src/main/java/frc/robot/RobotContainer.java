@@ -40,7 +40,7 @@ import frc.robot.subsystems.LEDSubsystem;
 public class RobotContainer {
         private final Vision vision = new Vision();
         private final Telemetry logger = new Telemetry(MaxSpeed);
-        
+
         private final CommandXboxController driverController = new CommandXboxController(0); // Driver controller
         private final CommandXboxController operatorController = new CommandXboxController(1); // Operator controller
 
@@ -150,18 +150,24 @@ public class RobotContainer {
                                 .and(driverController.leftTrigger().negate())
                                 .and(driverController.rightTrigger().negate())
                                 .whileTrue(unwindClimber);
-                                
-                driverController.leftTrigger().and(driverController.rightTrigger().negate())
-                                .whileTrue(Commands.defer(
-                                                () -> AutoBuilder.pathfindToPose(vision.decidePoseAlignmentLeft(),
-                                                                constraints, 0),
-                                                Set.of(drivetrain)));
 
-                driverController.rightTrigger().and(driverController.leftTrigger().negate())
-                                .whileTrue(Commands.defer(
-                                                () -> AutoBuilder.pathfindToPose(vision.decidePoseAlignmentLeft(),
-                                                                constraints, 0),
-                                                Set.of(drivetrain)));
+               // if (vision.isTargetIdAvailable()) {
+                        driverController.leftTrigger().and(driverController.rightTrigger().negate())
+                                        .whileTrue(Commands.defer(
+                                                        () -> AutoBuilder.pathfindToPose(
+                                                                        vision.decidePoseAlignmentLeft(),
+                                                                        constraints, 0),
+                                                        Set.of(drivetrain)));
+               // }
+
+                //if (vision.isTargetIdAvailable()) {
+                        driverController.rightTrigger().and(driverController.leftTrigger().negate())
+                                        .whileTrue(Commands.defer(
+                                                        () -> AutoBuilder.pathfindToPose(
+                                                                        vision.decidePoseAlignmentRight(),
+                                                                        constraints, 0),
+                                                        Set.of(drivetrain)));
+               // }
 
                 // TODO: Run sysid
                 // Run SysId routines when holding back/start and X/Y.
@@ -208,5 +214,5 @@ public class RobotContainer {
         public Command getAutonomousCommand() {
                 return autoChooser.getSelected();
                 // return driveForwards;
-    }
+        }
 }

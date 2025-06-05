@@ -15,9 +15,6 @@ import frc.robot.subsystems.SwerveDriveSubsystem;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
-import edu.wpi.first.cameraserver.CameraServer;
-//import edu.wpi.first.wpilibj.DataLogManager;
-
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
@@ -29,8 +26,7 @@ public class Robot extends TimedRobot {
     m_robotContainer = new RobotContainer();
     drivetrain = m_robotContainer.getDrivetrain();
     m_gcTimer.start();
-    CameraServer.startAutomaticCapture("Climber Cam", 0);
-    CameraServer.startAutomaticCapture("Intake Cam", 1);
+    //CameraServer.startAutomaticCapture("Intake Cam", 1);
     PathfindingCommand.warmupCommand().schedule();
     // DataLogManager.start();
   }
