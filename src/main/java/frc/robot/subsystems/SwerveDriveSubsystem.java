@@ -351,7 +351,6 @@ public class SwerveDriveSubsystem extends TunerSwerveDrivetrain implements Subsy
             Pose2d visionRobotPoseMeters,
             double timestampSeconds,
             Matrix<N3, N1> visionMeasurementStdDevs) {
-                System.out.println("addVisionMeasurement");
         super.addVisionMeasurement(visionRobotPoseMeters, Utils.fpgaToCurrentTime(timestampSeconds),
                 visionMeasurementStdDevs);
     }

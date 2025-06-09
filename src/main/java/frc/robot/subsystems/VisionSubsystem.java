@@ -22,7 +22,7 @@
  * SOFTWARE.
  */
 
-package frc.robot;
+package frc.robot.subsystems;
 
 import edu.wpi.first.math.Matrix;
 import edu.wpi.first.math.VecBuilder;
@@ -30,6 +30,8 @@ import edu.wpi.first.math.geometry.Pose2d;
 import edu.wpi.first.math.geometry.Rotation2d;
 import edu.wpi.first.math.numbers.N1;
 import edu.wpi.first.math.numbers.N3;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
+import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 import static frc.robot.constants.Constants.VisionConstants.*;
 
@@ -43,34 +45,41 @@ import org.photonvision.PhotonPoseEstimator.PoseStrategy;
 import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
-public class Vision {
+public class VisionSubsystem extends SubsystemBase {
     private final PhotonCamera camera;
     private final PhotonPoseEstimator photonEstimator;
-    PhotonPipelineResult result;
-    PhotonTrackedTarget bestTarget;
-    int targetId;
-    Pose2d pose;
+    private PhotonPipelineResult result;
+    private int targetId;
+    private List<PhotonTrackedTarget> targets;
+    private List<Integer> excludedIds = List.of(4, 5, 14, 15, 12, 13, 1, 2, 3, 16);
 
     private Matrix<N3, N1> curStdDevs;
 
-    public Vision() {
+    public VisionSubsystem() {
         camera = new PhotonCamera(kCameraName);
 
         photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCam);
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
+    }
 
+    @Override
+    public void periodic() {
+        // This method will be called once per scheduler run
         result = camera.getLatestResult();
-        if (result != null) {
-            bestTarget = result.getBestTarget();
-            if (bestTarget != null) {
-                targetId = bestTarget.getFiducialId();
-            } else {
-                targetId = 0; // Default value if no target is found
+        targets = result.getTargets();
+
+        if (!targets.isEmpty()) {
+            targetId = 30; // Default value if no valid target is found
+            for (PhotonTrackedTarget target : targets) {
+                if (!excludedIds.contains(target.getFiducialId())) {
+                    targetId = target.getFiducialId();
+                    break; // Stop once a valid target is found
+                }
             }
         } else {
-            bestTarget = null;
-            targetId = 0; // Default value if no result is available
+            targetId = 40; // Default value if no targets are available
         }
+        SmartDashboard.putNumber("targetId: ", targetId);
     }
 
     private static final Map<Integer, Pose2d> LEFT_ALIGNMENT_POSES = Map.ofEntries(
@@ -86,10 +95,6 @@ public class Vision {
             Map.entry(22, new Pose2d(5, 2.79, Rotation2d.fromDegrees(120))),
             // Blue alliance, front right face, left side
             Map.entry(17, new Pose2d(3.68, 2.95, Rotation2d.fromDegrees(60))),
-            // Blue alliance, left feeding station, left side
-            Map.entry(13, new Pose2d(0.77, 6.7, Rotation2d.fromDegrees(125))),
-            // Blue alliance, right feeding station, left side
-            Map.entry(12, new Pose2d(1.565, 0.76, Rotation2d.fromDegrees(-125))),
             // Red alliance, front face, left side
             Map.entry(7, new Pose2d(14.39, 3.87, Rotation2d.fromDegrees(180))),
             // Red alliance, front left face, left side
@@ -101,11 +106,8 @@ public class Vision {
             // Red alliance, back right face, left side
             Map.entry(9, new Pose2d(12.54, 5.26, Rotation2d.fromDegrees(-60))),
             // Red alliance, front right face, left side
-            Map.entry(8, new Pose2d(13.86, 5, Rotation2d.fromDegrees(-120))),
-            // Red alliance, left feeding station, left side
-            Map.entry(1, new Pose2d(16.81, 1.346, Rotation2d.fromDegrees(-55))),
-            // Red alliance, right feeding station, left side
-            Map.entry(2, new Pose2d(16, 7.3, Rotation2d.fromDegrees(55))));
+            Map.entry(8, new Pose2d(13.86, 5, Rotation2d.fromDegrees(-120))));
+
 
     private static final Map<Integer, Pose2d> RIGHT_ALIGNMENT_POSES = Map.ofEntries(
             // Blue alliance, front face, right side
@@ -120,10 +122,6 @@ public class Vision {
             Map.entry(22, new Pose2d(5.3, 2.96, Rotation2d.fromDegrees(120))),
             // Blue alliance, front right face, right side
             Map.entry(17, new Pose2d(3.965, 2.79, Rotation2d.fromDegrees(60))),
-            // Blue alliance, left feeding station, right side
-            Map.entry(13, new Pose2d(1.58, 7.3, Rotation2d.fromDegrees(125))),
-            // Blue alliance, right feeding station, right side
-            Map.entry(12, new Pose2d(.75, 1.335, Rotation2d.fromDegrees(-125))),
             // Red alliance, front face, right side
             Map.entry(7, new Pose2d(14.39, 4.19, Rotation2d.fromDegrees(180))),
             // Red alliance, front left face, right side
@@ -135,29 +133,17 @@ public class Vision {
             // Red alliance, back right face, right side
             Map.entry(9, new Pose2d(12.25, 5, Rotation2d.fromDegrees(-60))),
             // Red alliance, front right face, right side
-            Map.entry(8, new Pose2d(13.58, 5.26, Rotation2d.fromDegrees(-120))),
-            // Red alliance, left feeding station, right side
-            Map.entry(1, new Pose2d(16, 0.73, Rotation2d.fromDegrees(-55))),
-            // Red alliance, right feeding station, right side
-            Map.entry(2, new Pose2d(16.8, 6.7, Rotation2d.fromDegrees(55))));
+            Map.entry(8, new Pose2d(13.58, 5.26, Rotation2d.fromDegrees(-120))));
+            
 
     public Pose2d decidePoseAlignmentLeft() {
-        return LEFT_ALIGNMENT_POSES.getOrDefault(targetId, null);
+        System.out.println("targetId left: " + targetId);
+        return LEFT_ALIGNMENT_POSES.getOrDefault(targetId, new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     }
 
     public Pose2d decidePoseAlignmentRight() {
-        return RIGHT_ALIGNMENT_POSES.getOrDefault(targetId, null);
-    }
-
-    public boolean isTargetIdAvailable() {
-        final boolean isTargetIdAvailable;
-        if (targetId == 0) {
-            isTargetIdAvailable = false;
-        } else {
-            isTargetIdAvailable = true;
-        }
-
-        return isTargetIdAvailable;
+        System.out.println("targetId right: " + targetId);
+        return RIGHT_ALIGNMENT_POSES.getOrDefault(targetId, new Pose2d(0, 0, Rotation2d.fromDegrees(0)));
     }
 
     /**

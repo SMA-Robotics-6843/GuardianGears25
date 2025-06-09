@@ -107,7 +107,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         }),
 
-          ledSubsystem.setLED(red)
+          ledSubsystem.setLED(yellow)
         
         );
   }
@@ -125,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         }),
 
-          ledSubsystem.setLED(orange)
+          ledSubsystem.setLED(purple)
         
         );
   }
@@ -142,7 +142,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         }),
 
-        ledSubsystem.setLED(yellow)
+        ledSubsystem.setLED(orange)
       
       );
   }
@@ -159,7 +159,7 @@ public class ElevatorSubsystem extends SubsystemBase {
 
         }),
 
-        ledSubsystem.setLED(green)
+        ledSubsystem.setLED(scrollingRainbow)
       
       );
   }
@@ -174,7 +174,11 @@ public class ElevatorSubsystem extends SubsystemBase {
           elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
               -elevatorMotorsFeedingSetpoint));
 
-        }));
+        }),
+
+        ledSubsystem.setLED(green)
+        
+        );
   }
 
   public Command elevatorToLowAlgae() {

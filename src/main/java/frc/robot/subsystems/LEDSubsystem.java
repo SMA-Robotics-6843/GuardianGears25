@@ -38,4 +38,12 @@ public class LEDSubsystem extends SubsystemBase {
           pattern.applyTo(ledBuffer);
         });
   }
+
+  public AddressableLED getLEDStrip() {
+    return ledStrip;
+  }
+
+  public AddressableLEDBuffer getLEDBuffer() {
+    return ledBuffer;
+  }
 }

@@ -23,8 +23,7 @@ public class CoralFromFeeding extends SequentialCommandGroup {
         // Run the elevator to feeding and the end effector to feeding, then run the end effector's motor in
         m_elevatorSubsystem.elevatorToFeeding()
             .alongWith(
-                m_endEffectorSubsystem.endEffectorToFeeding())
-            .withTimeout(secondsToReachFeeding),
+                m_endEffectorSubsystem.endEffectorToFeeding()).withTimeout(secondsToReachFeeding),
 
         m_endEffectorSubsystem.fMotorIn().withTimeout(secondsToRunIntakeFeeding));
   }

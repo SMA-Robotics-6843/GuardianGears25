@@ -32,13 +32,14 @@ import static frc.robot.constants.Constants.DrivetrainConstants.*;
 import java.util.Set;
 
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 import frc.robot.subsystems.ClimberSubsystem;
 import frc.robot.subsystems.ElevatorSubsystem;
 import frc.robot.subsystems.EndEffectorSubsystem;
 import frc.robot.subsystems.LEDSubsystem;
 
 public class RobotContainer {
-        private final Vision vision = new Vision();
+        private final VisionSubsystem vision = new VisionSubsystem();
         private final Telemetry logger = new Telemetry(MaxSpeed);
 
         private final CommandXboxController driverController = new CommandXboxController(0); // Driver controller
@@ -117,10 +118,12 @@ public class RobotContainer {
 
                 // Driver controls
                 driverController.leftStick().whileTrue(drivetrain.applyRequest(() -> brake));
+
                 // driverController.leftBumper().whileTrue(drivetrain.applyRequest(
-                // () -> point.withModuleDirection(
-                // new Rotation2d(-driverController.getLeftY(),
-                // -driverController.getLeftX()))));
+                //                 () -> point.withModuleDirection(
+                //                                 new Rotation2d(-driverController.getLeftY(),
+                //                                                 -driverController.getLeftX()))));
+
                 driverController.leftBumper().whileTrue(drivetrain.applyRequest(
                                 () -> driveRobotCentric
                                                 .withVelocityX(-driverController.getLeftY() * MaxSpeed)
@@ -151,23 +154,19 @@ public class RobotContainer {
                                 .and(driverController.rightTrigger().negate())
                                 .whileTrue(unwindClimber);
 
-               // if (vision.isTargetIdAvailable()) {
-                        driverController.leftTrigger().and(driverController.rightTrigger().negate())
-                                        .whileTrue(Commands.defer(
-                                                        () -> AutoBuilder.pathfindToPose(
-                                                                        vision.decidePoseAlignmentLeft(),
-                                                                        constraints, 0),
-                                                        Set.of(drivetrain)));
-               // }
+                driverController.leftTrigger().and(driverController.rightTrigger().negate())
+                                .whileTrue(Commands.defer(
+                                                () -> AutoBuilder.pathfindToPose(
+                                                                vision.decidePoseAlignmentLeft(),
+                                                                constraints, 0),
+                                                Set.of(drivetrain)));
 
-                //if (vision.isTargetIdAvailable()) {
-                        driverController.rightTrigger().and(driverController.leftTrigger().negate())
-                                        .whileTrue(Commands.defer(
-                                                        () -> AutoBuilder.pathfindToPose(
-                                                                        vision.decidePoseAlignmentRight(),
-                                                                        constraints, 0),
-                                                        Set.of(drivetrain)));
-               // }
+                driverController.rightTrigger().and(driverController.leftTrigger().negate())
+                                .whileTrue(Commands.defer(
+                                                () -> AutoBuilder.pathfindToPose(
+                                                                vision.decidePoseAlignmentRight(),
+                                                                constraints, 0),
+                                                Set.of(drivetrain)));
 
                 // TODO: Run sysid
                 // Run SysId routines when holding back/start and X/Y.

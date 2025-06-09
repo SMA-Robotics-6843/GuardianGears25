@@ -28,7 +28,7 @@ public class Constants {
     public static final double secondsToReachL4 = 1;
     public static final double secondsToReachLowAlgae = .7;
     public static final double secondsToReachHighAlgae = .7;
-    public static final double secondsToRunIntakeFeeding = 3.5;
+    public static final double secondsToRunIntakeFeeding = 2;
     public static final double secondsToRunIntakeScoring = 1;
     public static final double secondsToRunIntakeAlgae = 10;
     public static final double secondsToReleaseClimber = 1;
@@ -71,7 +71,7 @@ public class Constants {
     }
 
     public static class AutomationConstants {
-        public static final double elevatorMotorsFeedingSetpoint = 0;
+        public static final double elevatorMotorsFeedingSetpoint = 1;
         public static final double elevatorMotorsL1Setpoint = 1.5;
         public static final double elevatorMotorsL2Setpoint = 3.5;
         public static final double elevatorMotorsL3Setpoint = 24; // 27.6
@@ -79,12 +79,12 @@ public class Constants {
         public static final double elevatorMotorsLowAlgaeSetpoint = 3;
         public static final double elevatorMotorsHighAlgaeSetpoint = 20;
 
-        public static final double sassyMotorHoldSetpoint = -3;
-        public static final double sassyMotorFeedingSetpoint = 0;
+        public static final double sassyMotorHoldSetpoint = 0;
+        public static final double sassyMotorFeedingSetpoint = 4;
         public static final double sassyMotorL1Setpoint = -1;
-        public static final double sassyMotorL2Setpoint = -3;
-        public static final double sassyMotorL3Setpoint = -3;
-        public static final double sassyMotorL4Setpoint = -8;
+        public static final double sassyMotorL2Setpoint = 0;
+        public static final double sassyMotorL3Setpoint = 0;
+        public static final double sassyMotorL4Setpoint = -12.5;
         public static final double sassyMotorRemoveAlgaeSetpoint = -6;
     }
 

@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.subsystems.SwerveDriveSubsystem;
+import frc.robot.subsystems.VisionSubsystem;
 
 import com.pathplanner.lib.commands.PathfindingCommand;
 
@@ -19,14 +20,14 @@ public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
   private final RobotContainer m_robotContainer;
   private SwerveDriveSubsystem drivetrain;
-  private Vision vision = new Vision();
+  private VisionSubsystem vision = new VisionSubsystem();
   private Timer m_gcTimer = new Timer();
 
   public Robot() {
     m_robotContainer = new RobotContainer();
+    System.out.println("robotcontainer");
     drivetrain = m_robotContainer.getDrivetrain();
     m_gcTimer.start();
-    //CameraServer.startAutomaticCapture("Intake Cam", 1);
     PathfindingCommand.warmupCommand().schedule();
     // DataLogManager.start();
   }
@@ -42,7 +43,6 @@ public class Robot extends TimedRobot {
     SmartDashboard.putBoolean("visionEst.isPresent", visionEst.isPresent());
     visionEst.ifPresent(
         est -> {
-          System.out.println("visionEst present");
           // Change our trust in the measurement based on the tags we can see
           var estStdDevs = vision.getEstimationStdDevs();
 
