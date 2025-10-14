@@ -36,10 +36,10 @@ Remember that documentation for most things can be found [here](https://docs.wpi
 
 Pathplanner documentation can be found [here](https://pathplanner.dev/home.html)
 
-This was our first year using pathplanner, so there is still much to improved on.
+This was our first year using pathplanner, so there is still much to improve on.
 
 - The robot config values need to be set; Sysid needs to be used to calculate the Robot MOI.
-- The autonomous paths need to be tuned on a practice field through trial and error.
+- **The autonomous paths need to be tuned on a practice field through trial and error**.
 - Pathplanner paths take up a lot of memory on the RoboRIO. Be careful when making several of them.
 
 ### Robot Pose, Pathfinding, and Vision
@@ -48,7 +48,7 @@ This was our first year using pathplanner, so there is still much to improved on
   - We did not test the photonvision enough this year so our pathplanning and pathfinding was still off.
   - Photonvision documentation can be found [here](https://docs.photonvision.org/en/latest/)
 
-- **Pathfinding** is pathplanner's function to create a path on the fly to drive to a set pose or a path you have made. I set up 12 different pathfinding commands to line up with each reef branch, and 2 more to line up with feeding stations, but these were not tested. The pose of the robot drifts too often and Photonvision was not tuned enough to compensate for it.
+- **Pathfinding** is pathplanner's function to create a path on the fly to drive to a set pose or a path you have made. The left and right triggers attempt to pathfind to the left and right reef bars respectively. The right side pathfinding works more consistently for some reason.
   - Pathfinding documentation can be found [here](https://pathplanner.dev/pplib-pathfinding.html)
 
 ### Presets
@@ -64,7 +64,7 @@ Documentation:
 
 PID is used to set motors to move to set encoder values and hold them there. This is used to make feeding and scoring presets for every level.
 
-I first tried to use the Ziegler Nichols method that was explained in the video below, but after I did the calculations to find the three values it didn't work. I ended up finding that just setting kP to .1 worked fine so I left it at that. This later led to a problem with the L3 preset where the elevator would go past the correct setpoint and hit the top.
+I first tried to use the Ziegler Nichols method that was explained in the video below, but after I did the calculations to find the three values it didn't work. I ended up finding that just setting kP to .1 worked fine so I left it at that. I suspect this later led to a problem with the L3 preset where the elevator would go past the correct setpoint and hit the top.
 
 Documentation:
 
@@ -86,10 +86,7 @@ Controls are set in RobotContainer.java
   - Hold right bumper to drive slowly
   - Both bumpers can be used at the same time
   - Be careful when using the bumpers, you should release everything before changing which bumpers you are pressing
-
-Pathfinding controls:
-
-![Drawing 04-02-2025 20 21 excalidraw](https://github.com/user-attachments/assets/e61c9e23-a830-4842-b46f-cbc1d6986c3c)
+  - Left and right triggers attempt to align to the left or right reef bar where the robot is facing
 
 ### Operator Controller
 
