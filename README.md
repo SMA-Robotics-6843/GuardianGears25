@@ -2,12 +2,14 @@
 
 FRC Team 6843 Guardian Gears' command-based Project for the Reefscape season.
 
-Remember that documentation for most things can be found [here](https://docs.wpilib.org) or by searching "(topic) documentation."
+Remember that documentation for most things can be found in the [wpilib docs](https://docs.wpilib.org).
 
 ## Subsystems
 
+This year, instead of having a seperate file for every command, I created each command inline in their respective subsystem files.
+
 - CTRE Drivetrain
-  - MK4i motors with Pigeon 2 gyro
+  - MK4i swerve with Kraken motors and Pigeon 2 gyro
 - Elevator
   - Two motors spinning opposite
 - End Effector
@@ -50,10 +52,11 @@ This was our first year using pathplanner, so there is still much to improve on.
 
 - **Pathfinding** is pathplanner's function to create a path on the fly to drive to a set pose or a path you have made. The left and right triggers attempt to pathfind to the left and right reef bars respectively. The right side pathfinding works more consistently for some reason.
   - Pathfinding documentation can be found [here](https://pathplanner.dev/pplib-pathfinding.html)
+- A better system for alignment to a pose is a [holonomic drive controller](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/trajectories/holonomic.html), which combines multiple PID controllers and a ProfiledPIDController for the robot's different forms of movement.
 
 ### Presets
 
-- Our presets are command groups that chain together commands to automatically score or intake pieces. These commands are set in-line in the subsystems and use PID to move parts of the robot to set positions. Command groups allow you set time between the commands and if you want to run them at the same time or sequentially.
+- Our presets are command groups that chain together commands to automatically score or intake pieces. These commands use PID to move parts of the robot to set positions. Command groups allow you set time between the commands and if you want to run them at the same time or sequentially. Eventually, the goal is to completely phase out manual control and just have buttons for each automated task. This requires good tuning of PID, vision, and the use of sensors to work well.
 
 Documentation:
 
@@ -62,16 +65,18 @@ Documentation:
 
 ### PID
 
-PID is used to set motors to move to set encoder values and hold them there. This is used to make feeding and scoring presets for every level.
+PID is used to set motors to move to set encoder values (setpoints) and hold them there. This is used to make feeding and scoring presets for every level.
 
-I first tried to use the Ziegler Nichols method that was explained in the video below, but after I did the calculations to find the three values it didn't work. I ended up finding that just setting kP to .1 worked fine so I left it at that. I suspect this later led to a problem with the L3 preset where the elevator would go past the correct setpoint and hit the top.
+I first tried to use the Ziegler Nichols method that was explained in the video below, but after I did the calculations to find the three values it didn't work. I ended up finding that just setting kP to .1 worked fine for L2 so I left it at that. With this tuning, if the elevator is far enough away from its setpoint, it will move to its setpoint, slow down, but not stop. The PID needs to be tuned properly through trial and error to prevent this.
 
-Documentation:
+Documentation/info:
 
 - [Introduction](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/introduction/introduction-to-pid.html)
 - [PID Control in WPILib](https://docs.wpilib.org/en/stable/docs/software/advanced-controls/controllers/pidcontroller.html)
 - [PID Control in Command-based](https://docs.wpilib.org/en/stable/docs/software/commandbased/pid-subsystems-commands.html#pid-control-in-command-based)
-- [Explanation video](https://www.youtube.com/watch?v=UOuRx9Ujsog&t=252s)
+- [PID Control (video)](https://www.youtube.com/watch?v=UOuRx9Ujsog&t=252s)
+- [What is a PID Controller? (video)](https://www.youtube.com/watch?v=OqvrYNJvtaU&t=456s)
+- [How to Tune a PID Controller - Made Simple! (video)](https://www.youtube.com/watch?v=6EcxGh1fyMw&t=458s)
 
 ## Controls
 
@@ -109,7 +114,7 @@ Controls are set in RobotContainer.java
 
 ## What to do better next time
 
-- Use sysid on a practice field to find values in TunerConstants and find the robot MOI for pathplanner
 - Tune autos on a practice field
-- Tune photonvision
-- Properly calculate PID values
+- Tune drivetrain alignment system (photonvision + holonomic drive controller)
+- Tune PID values
+- Install sensors on the robot to allow for smooth transitions between commands in sequential groups (ex. setting a command to end when a sensor does not detect a gamepiece)

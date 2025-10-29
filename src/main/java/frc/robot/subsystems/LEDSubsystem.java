@@ -36,7 +36,7 @@ public class LEDSubsystem extends SubsystemBase {
     return run(
         () -> {
           pattern.applyTo(ledBuffer);
-        });
+        }).ignoringDisable(true);
   }
 
   public AddressableLED getLEDStrip() {

@@ -18,15 +18,15 @@ import com.pathplanner.lib.commands.PathfindingCommand;
 
 public class Robot extends TimedRobot {
   private Command m_autonomousCommand;
-  private final RobotContainer m_robotContainer;
+  private final RobotContainer robotContainer;
   private SwerveDriveSubsystem drivetrain;
   private VisionSubsystem vision = new VisionSubsystem();
   private Timer m_gcTimer = new Timer();
 
   public Robot() {
-    m_robotContainer = new RobotContainer();
+    robotContainer = new RobotContainer();
     System.out.println("robotcontainer");
-    drivetrain = m_robotContainer.getDrivetrain();
+    drivetrain = robotContainer.getDrivetrain();
     m_gcTimer.start();
     PathfindingCommand.warmupCommand().schedule();
     // DataLogManager.start();
@@ -65,7 +65,7 @@ public class Robot extends TimedRobot {
 
   @Override
   public void autonomousInit() {
-    m_autonomousCommand = m_robotContainer.getAutonomousCommand();
+    m_autonomousCommand = robotContainer.getAutonomousCommand();
 
     if (m_autonomousCommand != null) {
       m_autonomousCommand.schedule();
