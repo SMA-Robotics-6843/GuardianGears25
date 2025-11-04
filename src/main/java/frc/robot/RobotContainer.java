@@ -24,8 +24,6 @@ import frc.robot.commandgroups.ScoreCoralL1;
 import frc.robot.commandgroups.ScoreCoralL2;
 import frc.robot.commandgroups.ScoreCoralL3;
 import frc.robot.commandgroups.ScoreCoralL4;
-import frc.robot.commandgroups.RemoveHighAlgae;
-import frc.robot.commandgroups.RemoveLowAlgae;
 import frc.robot.constants.TunerConstants;
 import static frc.robot.constants.Constants.DrivetrainConstants.*;
 
@@ -70,8 +68,6 @@ public class RobotContainer {
         public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
         public final ScoreCoralL3 scoreCoralL3 = new ScoreCoralL3(elevator, endEffector);
         public final ScoreCoralL4 scoreCoralL4 = new ScoreCoralL4(elevator, endEffector);
-        public final RemoveLowAlgae removeLowAlgae = new RemoveLowAlgae(elevator, endEffector);
-        public final RemoveHighAlgae removeHighAlgae = new RemoveHighAlgae(elevator, endEffector);
         public final ReleaseClimber releaseClimber = new ReleaseClimber(climber);
 
         private final SendableChooser<Command> autoChooser;
@@ -196,8 +192,6 @@ public class RobotContainer {
                 operatorController.x().and(operatorController.leftBumper()).whileTrue(scoreCoralL2);
                 operatorController.b().and(operatorController.leftBumper()).whileTrue(scoreCoralL3);
                 operatorController.y().and(operatorController.leftBumper()).whileTrue(scoreCoralL4);
-                operatorController.leftTrigger().and(operatorController.leftBumper()).whileTrue(removeLowAlgae);
-                operatorController.rightTrigger().and(operatorController.leftBumper()).whileTrue(removeHighAlgae);
 
                 // Reset elevator and end effector encoders on right stick press
                 operatorController.rightStick().onTrue(resetEncoders());

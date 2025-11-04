@@ -20,13 +20,13 @@ import com.revrobotics.spark.SparkLowLevel.MotorType;
 public class ElevatorSubsystem extends SubsystemBase {
   // Left motor
   private SparkMax elevatorMotorLeft = new SparkMax(elevatorMotorLeftID, MotorType.kBrushless);
-  private final PIDController elevatorMotorLeftPID = new PIDController(elevatorMotorLeftkP, elevatorMotorLeftkI,
-      elevatorMotorLeftkD);
+  private final PIDController elevatorMotorLeftPID 
+    = new PIDController(elevatorMotorLeftkP, elevatorMotorLeftkI, elevatorMotorLeftkD);
 
   // Right motor
   private SparkMax elevatorMotorRight = new SparkMax(elevatorMotorRightID, MotorType.kBrushless);
-  private final PIDController elevatorMotorRightPID = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI,
-      elevatorMotorRightkD);
+  private final PIDController elevatorMotorRightPID 
+    = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI, elevatorMotorRightkD);
 
   private LEDSubsystem ledSubsystem;
 
@@ -39,9 +39,7 @@ public class ElevatorSubsystem extends SubsystemBase {
               elevatorMotorLeft.disable();
               elevatorMotorRight.disable();
             })
-            .andThen(run(() -> {
-            }))
-            .withName("Idle"));
+            .andThen(Commands.none()));
   }
 
   public void resetElevatorEncoders() {
@@ -102,7 +100,6 @@ public class ElevatorSubsystem extends SubsystemBase {
   }
 
   public Command elevatorToL3() {
-    if (!elevatorMotorLeftPID.atSetpoint() && !elevatorMotorRightPID.atSetpoint()) {
       return parallel(
         run(() -> {
           elevatorMotorLeft.set(
@@ -112,17 +109,15 @@ public class ElevatorSubsystem extends SubsystemBase {
         }),
         ledSubsystem.setLED(orange)
       );
-    } else {
-      return Commands.none();}
   }
 
   public Command elevatorToL4() {
     return parallel(
         run(() -> {
           elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL4Setpoint));
-          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -elevatorMotorsL4Setpoint));
+            elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsL4Setpoint));
+          elevatorMotorRight.set(
+            elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), -elevatorMotorsL4Setpoint));
         }),
         ledSubsystem.setLED(scrollingRainbow)
       );
@@ -132,32 +127,12 @@ public class ElevatorSubsystem extends SubsystemBase {
     return parallel(
         run(() -> {
           elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsFeedingSetpoint));
-          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -elevatorMotorsFeedingSetpoint));
+            elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsFeedingSetpoint));
+          elevatorMotorRight.set(
+            elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), -elevatorMotorsFeedingSetpoint));
         }),
         ledSubsystem.setLED(green)
         );
-  }
-
-  public Command elevatorToLowAlgae() {
-    return parallel(
-        run(() -> {
-          elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsLowAlgaeSetpoint));
-          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -elevatorMotorsLowAlgaeSetpoint));
-        }));
-  }
-
-  public Command elevatorToHighAlgae() {
-    return parallel(
-        run(() -> {
-          elevatorMotorLeft.set(
-              elevatorMotorLeftPID.calculate(elevatorMotorLeft.getEncoder().getPosition(), elevatorMotorsHighAlgaeSetpoint));
-          elevatorMotorRight.set(elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(),
-              -elevatorMotorsHighAlgaeSetpoint));
-        }));
   }
 
   @Override

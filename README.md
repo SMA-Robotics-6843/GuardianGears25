@@ -108,8 +108,6 @@ Controls are set in RobotContainer.java
 - **b**: Run automation to score coral on L3
 - **y**: Run automation to score coral on L4
 - **right bumper**: Run automation to intake from feeding station
-- **left trigger**: Run automation to remove algae from the lower level
-- **right trigger**: Run automation to remove algae from the higher level
 - **press right stick**: Reset elevator and end effector encoders to 0
 
 ## What to do better next time
