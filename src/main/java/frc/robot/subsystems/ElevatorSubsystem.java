@@ -5,14 +5,20 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.filter.Debouncer;
+import edu.wpi.first.math.filter.Debouncer.DebounceType;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.Commands;
 import edu.wpi.first.wpilibj2.command.SubsystemBase;
+import edu.wpi.first.wpilibj2.command.Command.InterruptionBehavior;
+
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import static frc.robot.constants.Constants.ElevatorConstants.*;
 import static frc.robot.constants.Constants.AutomationConstants.*;
 import static frc.robot.constants.Constants.LEDConstants.*;
+
+import java.util.function.BooleanSupplier;
 
 import com.revrobotics.spark.SparkMax;
 import com.revrobotics.spark.SparkLowLevel.MotorType;
@@ -29,6 +35,7 @@ public class ElevatorSubsystem extends SubsystemBase {
     = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI, elevatorMotorRightkD);
 
   private LEDSubsystem ledSubsystem;
+  private Debouncer elevatorAtSetpointDebouncer = new Debouncer(.5, DebounceType.kRising);
 
   /** Creates a new ElevatorSubsystem. */
   public ElevatorSubsystem(LEDSubsystem m_ledSubsystem) {
@@ -47,13 +54,11 @@ public class ElevatorSubsystem extends SubsystemBase {
     elevatorMotorRight.getEncoder().setPosition(0);
   }
 
-  public boolean getIsElevatorAtSetPoint() {
-    if (elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint()) {
-      return true;
-    } else {
-      return false;
-    }
+  public boolean isElevatorAtSetPoint() {
+    return elevatorAtSetpointDebouncer.calculate(elevatorMotorLeftPID.atSetpoint() && elevatorMotorRightPID.atSetpoint());
   }
+
+  BooleanSupplier isElevatorAtSetPointSupplier = this::isElevatorAtSetPoint;
 
   public Command elevatorUp() {
     return parallel(
@@ -120,7 +125,7 @@ public class ElevatorSubsystem extends SubsystemBase {
             elevatorMotorRightPID.calculate(elevatorMotorRight.getEncoder().getPosition(), -elevatorMotorsL4Setpoint));
         }),
         ledSubsystem.setLED(scrollingRainbow)
-      );
+      ).until(isElevatorAtSetPointSupplier);
   }
 
   public Command elevatorToFeeding() {
@@ -138,7 +143,7 @@ public class ElevatorSubsystem extends SubsystemBase {
   @Override
   public void periodic() {
     // This method will be called once per scheduler run
-    SmartDashboard.putBoolean("isElevatorAtSetpoint", getIsElevatorAtSetPoint());
+    SmartDashboard.putBoolean("isElevatorAtSetpoint", isElevatorAtSetPoint());
     SmartDashboard.putNumber("elevatorMotorLeft encoder", elevatorMotorLeft.getEncoder().getPosition());
     SmartDashboard.putNumber("elevatorMotorRight encoder", elevatorMotorRight.getEncoder().getPosition());
   }
