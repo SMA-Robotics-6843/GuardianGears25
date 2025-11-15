@@ -18,14 +18,8 @@ import static edu.wpi.first.wpilibj2.command.Commands.runOnce;
 import static edu.wpi.first.wpilibj2.command.Commands.parallel;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.sysid.SysIdRoutine.Direction;
-import frc.robot.commandgroups.CoralFromFeeding;
+import frc.robot.Automations;
 import frc.robot.commandgroups.ReleaseClimber;
-import frc.robot.commandgroups.ScoreCoralL1;
-import frc.robot.commandgroups.ScoreCoralL2;
-import frc.robot.commandgroups.ScoreCoralL3;
-import frc.robot.commandgroups.ScoreCoralL4;
-import frc.robot.commandgroups.RemoveHighAlgae;
-import frc.robot.commandgroups.RemoveLowAlgae;
 import frc.robot.constants.TunerConstants;
 import static frc.robot.constants.Constants.DrivetrainConstants.*;
 
@@ -65,13 +59,7 @@ public class RobotContainer {
         public final Command driveForwards = drivetrain.driveForwards(.7);
 
         // Use sequential command groups
-        public final CoralFromFeeding coralFromFeeding = new CoralFromFeeding(elevator, endEffector);
-        public final ScoreCoralL1 scoreCoralL1 = new ScoreCoralL1(elevator, endEffector);
-        public final ScoreCoralL2 scoreCoralL2 = new ScoreCoralL2(elevator, endEffector);
-        public final ScoreCoralL3 scoreCoralL3 = new ScoreCoralL3(elevator, endEffector);
-        public final ScoreCoralL4 scoreCoralL4 = new ScoreCoralL4(elevator, endEffector);
-        public final RemoveLowAlgae removeLowAlgae = new RemoveLowAlgae(elevator, endEffector);
-        public final RemoveHighAlgae removeHighAlgae = new RemoveHighAlgae(elevator, endEffector);
+        public final Automations automations = new Automations(elevator, endEffector);
         public final ReleaseClimber releaseClimber = new ReleaseClimber(climber);
 
         private final SendableChooser<Command> autoChooser;
@@ -80,10 +68,10 @@ public class RobotContainer {
                         3.0, 4.0, Units.degreesToRadians(540), Units.degreesToRadians(720));
 
         public RobotContainer() {
-                NamedCommands.registerCommand("CoralFromFeeding", coralFromFeeding);
-                NamedCommands.registerCommand("ScoreCoralL2", scoreCoralL2);
-                NamedCommands.registerCommand("ScoreCoralL3", scoreCoralL3);
-                NamedCommands.registerCommand("ScoreCoralL4", scoreCoralL4);
+                NamedCommands.registerCommand("CoralFromFeeding", automations.CoralFromFeeding());
+                NamedCommands.registerCommand("ScoreCoralL2", automations.ScoreCoralL2());
+                NamedCommands.registerCommand("ScoreCoralL3", automations.ScoreCoralL3());
+                NamedCommands.registerCommand("ScoreCoralL4", automations.ScoreCoralL4());
                 NamedCommands.registerCommand("ReleaseClimber", releaseClimber);
                 NamedCommands.registerCommand("DriveBackwards", driveBackwards);
 
@@ -191,13 +179,11 @@ public class RobotContainer {
 
                 // Left bumper
                 // Sequential command groups
-                operatorController.rightBumper().and(operatorController.leftBumper()).whileTrue(coralFromFeeding);
-                operatorController.a().and(operatorController.leftBumper()).whileTrue(scoreCoralL1);
-                operatorController.x().and(operatorController.leftBumper()).whileTrue(scoreCoralL2);
-                operatorController.b().and(operatorController.leftBumper()).whileTrue(scoreCoralL3);
-                operatorController.y().and(operatorController.leftBumper()).whileTrue(scoreCoralL4);
-                operatorController.leftTrigger().and(operatorController.leftBumper()).whileTrue(removeLowAlgae);
-                operatorController.rightTrigger().and(operatorController.leftBumper()).whileTrue(removeHighAlgae);
+                operatorController.rightBumper().and(operatorController.leftBumper()).whileTrue(automations.CoralFromFeeding());
+                operatorController.a().and(operatorController.leftBumper()).whileTrue(automations.ScoreCoralL1());
+                operatorController.x().and(operatorController.leftBumper()).whileTrue(automations.ScoreCoralL2());
+                operatorController.b().and(operatorController.leftBumper()).whileTrue(automations.ScoreCoralL3());
+                operatorController.y().and(operatorController.leftBumper()).whileTrue(automations.ScoreCoralL4());
 
                 // Reset elevator and end effector encoders on right stick press
                 operatorController.rightStick().onTrue(resetEncoders());

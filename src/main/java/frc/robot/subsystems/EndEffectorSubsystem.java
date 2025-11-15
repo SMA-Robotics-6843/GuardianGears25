@@ -27,31 +27,21 @@ public class EndEffectorSubsystem extends SubsystemBase {
   public EndEffectorSubsystem() {
     if (operatorController.back().getAsBoolean()) {
       setDefaultCommand(
-
           runOnce(
-
               () -> {
                 fMotor.disable();
                 sassyMotor.disable();
-              })
-
-      );
+              }));
     } else {
-
       // Set motors to disable when a command is not running
       setDefaultCommand(
-
           runOnce(
-
               () -> {
                 fMotor.disable();
               }).withTimeout(.1)
-
               .andThen(
                   holdEndEffector()
-
               )
-
       );
     }
   }
@@ -59,41 +49,28 @@ public class EndEffectorSubsystem extends SubsystemBase {
   public Command spinFMotor(double speed) {
     return parallel(
         run(
-
             () -> {
-
               fMotor.set(speed);
-
             }
-
         ));
   }
 
   public Command spinSassyMotor(double speed) {
     return parallel(
         run(
-
             () -> {
-
               sassyMotor.set(speed);
-
             }
-
         ));
   }
 
   public Command moveEndEffectorToSetpoint(double setpoint) {
     return parallel(
-        run(
-
-            () -> {
+        run(() -> {
               sassyMotor
                   .set((sassyMotorPID.calculate(sassyMotor.getEncoder().getPosition(), setpoint)) / 2);
-
             }
-
         ));
-
   }
 
   public boolean getIsEndEffectorAtSetPoint() {
@@ -144,10 +121,6 @@ public class EndEffectorSubsystem extends SubsystemBase {
 
   public Command holdEndEffector() {
     return moveEndEffectorToSetpoint(sassyMotorHoldSetpoint);
-  }
-
-  public Command endEffectorToRemoveAlgae() {
-    return moveEndEffectorToSetpoint(sassyMotorRemoveAlgaeSetpoint);
   }
 
   public void resetSassyMotorEncoder() {
