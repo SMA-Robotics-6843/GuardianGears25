@@ -22,9 +22,9 @@ import edu.wpi.first.wpilibj.util.Color;
 
 public class Constants {
     public static final double secondsToReachFeeding = 1;
-    public static final double secondsToReachL1 = .7;
-    public static final double secondsToReachL2 = .7;
-    public static final double secondsToReachL3 = .7;
+    public static final double secondsToReachL1 = 3;
+    public static final double secondsToReachL2 = 3;
+    public static final double secondsToReachL3 = 3;
     public static final double secondsToReachL4 = 1;
     public static final double secondsToReachLowAlgae = .7;
     public static final double secondsToReachHighAlgae = .7;
@@ -74,17 +74,17 @@ public class Constants {
         public static final double elevatorMotorsFeedingSetpoint = 1;
         public static final double elevatorMotorsL1Setpoint = 1.5;
         public static final double elevatorMotorsL2Setpoint = 3.5;
-        public static final double elevatorMotorsL3Setpoint = 24; // 27.6
+        public static final double elevatorMotorsL3Setpoint = 24.1;
         public static final double elevatorMotorsL4Setpoint = 77.5;
         public static final double elevatorMotorsLowAlgaeSetpoint = 3;
         public static final double elevatorMotorsHighAlgaeSetpoint = 20;
 
-        public static final double sassyMotorHoldSetpoint = 0;
+        public static final double sassyMotorHoldSetpoint = -3;
         public static final double sassyMotorFeedingSetpoint = 4;
-        public static final double sassyMotorL1Setpoint = -1;
-        public static final double sassyMotorL2Setpoint = 0;
-        public static final double sassyMotorL3Setpoint = 0;
-        public static final double sassyMotorL4Setpoint = -12.5;
+        public static final double sassyMotorL1Setpoint = -3;
+        public static final double sassyMotorL2Setpoint = -3;
+        public static final double sassyMotorL3Setpoint = -9;
+        public static final double sassyMotorL4Setpoint = -3;
         public static final double sassyMotorRemoveAlgaeSetpoint = -6;
     }
 
@@ -98,13 +98,9 @@ public class Constants {
         public static final double elevatorMotorsDownSpeed = -.45;
 
         // PID tunings
-        public static final double elevatorMotorLeftkP = 0.1;
-        public static final double elevatorMotorLeftkI = 0;
-        public static final double elevatorMotorLeftkD = 0;
-
-        public static final double elevatorMotorRightkP = 0.1;
-        public static final double elevatorMotorRightkI = 0;
-        public static final double elevatorMotorRightkD = 0;
+        public static final double elevatorMotorskP = 0.1;
+        public static final double elevatorMotorskI = 0;
+        public static final double elevatorMotorskD = 0.09;
     }
 
     public static class EndEffectorConstants {
