@@ -46,9 +46,11 @@ import org.photonvision.targeting.PhotonPipelineResult;
 import org.photonvision.targeting.PhotonTrackedTarget;
 
 public class VisionSubsystem extends SubsystemBase {
-    private final PhotonCamera camera;
+    private final PhotonCamera camera1;
+    private final PhotonCamera camera2;
     private final PhotonPoseEstimator photonEstimator;
-    private PhotonPipelineResult result;
+    private PhotonPipelineResult result1;
+    private PhotonPipelineResult result2;
     private int targetId;
     private List<PhotonTrackedTarget> targets;
     private List<Integer> excludedIds = List.of(4, 5, 14, 15, 12, 13, 1, 2, 3, 16);
@@ -56,7 +58,8 @@ public class VisionSubsystem extends SubsystemBase {
     private Matrix<N3, N1> curStdDevs;
 
     public VisionSubsystem() {
-        camera = new PhotonCamera(kCameraName);
+        camera1 = new PhotonCamera(kCameraName);
+        camera2 = new PhotonCamera(kCameraName2);
 
         photonEstimator = new PhotonPoseEstimator(kTagLayout, PoseStrategy.MULTI_TAG_PNP_ON_COPROCESSOR, kRobotToCam);
         photonEstimator.setMultiTagFallbackStrategy(PoseStrategy.LOWEST_AMBIGUITY);
@@ -65,8 +68,9 @@ public class VisionSubsystem extends SubsystemBase {
     @Override
     public void periodic() {
         // This method will be called once per scheduler run
-        result = camera.getLatestResult();
-        targets = result.getTargets();
+        result1 = camera1.getLatestResult();
+        result2 = camera1.getLatestResult();
+        targets = result1.getTargets();
 
         if (!targets.isEmpty()) {
             targetId = 30; // Default value if no valid target is found
@@ -162,12 +166,19 @@ public class VisionSubsystem extends SubsystemBase {
      */
     public Optional<EstimatedRobotPose> getEstimatedGlobalPose() {
         Optional<EstimatedRobotPose> visionEst = Optional.empty();
-        for (var change : camera.getAllUnreadResults()) {
+        List<PhotonPipelineResult> camera1UnreadResults = camera1.getAllUnreadResults();
+        List<PhotonPipelineResult> camera2UnreadResults = camera2.getAllUnreadResults();
+        // Combine camera1 results with camera2 results
+        camera1UnreadResults.addAll(camera2UnreadResults);
+
+        for (var change : camera1UnreadResults) {
             visionEst = photonEstimator.update(change);
-            updateEstimationStdDevs(visionEst, change.getTargets());
-        }
+            updateEstimationStdDevs(visionEst, change.getTargets()); 
+        } 
+
         return visionEst;
     }
+    
 
     /**
      * Calculates new standard deviations This algorithm is a heuristic that creates
@@ -178,8 +189,8 @@ public class VisionSubsystem extends SubsystemBase {
      * @param estimatedPose The estimated pose to guess standard deviations for.
      * @param targets       All targets in this camera frame
      */
-    private void updateEstimationStdDevs(
-            Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets) {
+    private void updateEstimationStdDevs(Optional<EstimatedRobotPose> estimatedPose, List<PhotonTrackedTarget> targets)
+             {
         if (estimatedPose.isEmpty()) {
             // No pose input. Default to single-tag std devs
             curStdDevs = kSingleTagStdDevs;

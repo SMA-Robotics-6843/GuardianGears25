@@ -27,12 +27,12 @@ public class ElevatorSubsystem extends SubsystemBase {
   // Left motor
   private SparkMax elevatorMotorLeft = new SparkMax(elevatorMotorLeftID, MotorType.kBrushless);
   private final PIDController elevatorMotorLeftPID 
-    = new PIDController(elevatorMotorLeftkP, elevatorMotorLeftkI, elevatorMotorLeftkD);
+    = new PIDController(elevatorMotorskP, elevatorMotorskI, elevatorMotorskD);
 
   // Right motor
   private SparkMax elevatorMotorRight = new SparkMax(elevatorMotorRightID, MotorType.kBrushless);
   private final PIDController elevatorMotorRightPID 
-    = new PIDController(elevatorMotorRightkP, elevatorMotorRightkI, elevatorMotorRightkD);
+    = new PIDController(elevatorMotorskP, elevatorMotorskI, elevatorMotorskD);
 
   private LEDSubsystem ledSubsystem;
   private Debouncer elevatorAtSetpointDebouncer = new Debouncer(.5, DebounceType.kRising);

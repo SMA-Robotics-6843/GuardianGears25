@@ -51,8 +51,11 @@ public class Constants {
 
     public static class VisionConstants {
         public static final String kCameraName = "Arducam";
-        // Offsets: 0m forward, 0.3m to the left, 0.41m up
-        public static final Transform3d kRobotToCam = new Transform3d(new Translation3d(0, 0.3, 0.41),
+        public static final String kCameraName2 = "Arducam2";
+        //Change later to a better camera name
+        public static final Transform3d kRobotToCam = new Transform3d(
+                // Offsets: 0m forward, 0.3m to the left, 0.41m up
+                new Translation3d(0, 0.3, 0.41),
                 // Camera is mounted facing -30 degrees or -.52 radians to the right
                 new Rotation3d(0, 0, -.52));
 
